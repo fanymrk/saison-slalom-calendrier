@@ -7,96 +7,144 @@
 <meta name="description" content="Calendrier des compétitions de slalom 2027 : N1, N2, N3, régionales et championnats, avec filtres.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF4F5;--card:#fff;--ink:#0E2A3A;--mute:#5B7280;--line:#D5E1E5;--accent:#0B6E8A;
---n1:#C8302B;--n2:#1E7F4F;--n3:#0B6E8A;--r:#7A5AA6;--c:#E0A100;--o:#4A5D6B}
+:root{--bg:#F3F6FD;--ink:#07123F;--mute:#4A5B8A;--line:#C9D6F2;--accent:#1262D6;--n1:#C8161D;--n2:#1262D6;--n3:#4DB2FF;--r:#8FA3D6;--c:#07123F;--o:#4A5B8A}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
-header{background:var(--ink);color:#fff;padding:28px 20px 22px}
-.wrap{max-width:900px;margin:0 auto}
-h1{font:700 clamp(34px,7vw,56px)/1 "Barlow Condensed",Impact,sans-serif;margin:0 0 6px;letter-spacing:.5px}
-header p{margin:0;color:#A9C4CE}
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 20px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "DM Sans",system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.top{padding:24px 0 8px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.chip{border:2px solid var(--col,var(--ink));background:#fff;color:var(--ink);border-radius:999px;padding:7px 14px;font:600 15px Barlow,sans-serif;cursor:pointer;transition:background .15s,color .15s}
-.chip[aria-pressed=true]{background:var(--col);color:#fff}
-.chip[data-l=C][aria-pressed=true]{color:var(--ink)}
-.chip small{opacity:.75;margin-left:4px}
-.chip:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #FFB000;outline-offset:2px}
-.tools{margin-top:10px}
-input[type=search],select{font:500 15px Barlow,sans-serif;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
-input[type=search]{flex:1 1 200px;min-width:0}
-label.sw{display:flex;gap:6px;align-items:center;font-size:15px;cursor:pointer}
-.link{background:none;border:0;color:var(--accent);font:600 15px Barlow,sans-serif;cursor:pointer;text-decoration:underline;padding:6px}
-#count{color:var(--mute);font-size:14px;margin-left:auto}
-main{padding:8px 20px 60px}
-h2{font:700 26px "Barlow Condensed",sans-serif;margin:28px 0 10px;text-transform:capitalize;display:flex;align-items:baseline;gap:10px}
-h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
-.ev{display:grid;grid-template-columns:72px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--col);border-radius:10px;padding:12px 14px;margin-bottom:8px}
-.ev.past{opacity:.5}
-.ev.next{box-shadow:0 0 0 2px var(--col)}
-.d{text-align:center;line-height:1}
-.d b{display:block;font:700 34px "Barlow Condensed",sans-serif}
-.d i{font-style:normal;font-size:13px;color:var(--mute);text-transform:capitalize}
-.t{font-weight:600;font-size:18px;line-height:1.2}
-.s{color:var(--mute);font-size:14px;margin-top:2px}
-.tag{display:inline-block;background:var(--col);color:#fff;font:700 13px "Barlow Condensed",sans-serif;letter-spacing:.5px;padding:1px 8px;border-radius:4px;margin-right:6px;vertical-align:2px}
-.tag[data-l=C]{color:var(--ink)}
-.nx{font:600 12px Barlow,sans-serif;color:var(--col);margin-left:6px}
-.empty{text-align:center;color:var(--mute);padding:50px 0}
-@media(max-width:520px){.ev{grid-template-columns:58px 1fr;gap:10px}.d b{font-size:28px}#count{width:100%;margin:0}}
-.top{justify-content:space-between;margin-bottom:8px}
+.hd{gap:16px}
+.logo{width:56px;height:56px;border-radius:14px;background:#fff;object-fit:contain;flex:none}
+h1{font:800 clamp(24px,4vw,32px)/1.1 "Bricolage Grotesque",sans-serif;margin:0}
+.ttl small{display:block;font:500 13px "DM Sans",sans-serif;color:var(--mute)}
+#q{flex:1 1 220px;height:48px;border-radius:99px;border:1px solid var(--line);padding:0 22px;font:500 16px "DM Sans",sans-serif;background:#fff;color:var(--ink);min-width:0}
+select{font:500 15px "DM Sans",sans-serif;padding:10px 14px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--ink)}
+.seg{display:flex;gap:4px;background:#fff;padding:4px;border-radius:99px}
+.seg button{font:600 14px "DM Sans",sans-serif;border:0;border-radius:99px;padding:10px 18px;cursor:pointer;background:none;color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.chip{border:0;box-shadow:inset 0 0 0 1px var(--line);background:#fff;color:var(--ink);border-radius:99px;padding:10px 18px;font:600 14px "DM Sans",sans-serif;cursor:pointer}
+.chip[data-l]::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--col);margin-right:8px;box-shadow:0 0 0 1px rgba(7,18,63,.2)}
+.chip[aria-pressed=true]{background:var(--col);color:#fff;box-shadow:none}
+.chip[data-l=N3][aria-pressed=true],.chip[data-l=R][aria-pressed=true]{color:var(--ink)}
+.chip small{opacity:.7;margin-left:5px}
 .chip:disabled{opacity:.35;cursor:default}
-#lab{font:700 22px "Barlow Condensed",sans-serif;min-width:130px;text-align:center;text-transform:capitalize}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:14px}
-.wd{font:600 13px Barlow,sans-serif;color:var(--mute);text-align:center}
-.day{background:#fff;border:1px solid var(--line);border-radius:8px;min-height:92px;padding:4px;cursor:pointer;display:flex;flex-direction:column;gap:2px;overflow:hidden;text-align:left;font:inherit;color:inherit}
-.day.out{background:transparent;border-color:transparent;cursor:default}
-.day.we{background:#F6F9FA}
-.day.today{outline:2px solid var(--accent)}
-.day.sel{outline:3px solid var(--ink)}
-.dn{font:700 15px "Barlow Condensed",sans-serif;color:var(--mute)}
-.pill{display:block;font:600 11px/1.35 Barlow,sans-serif;background:var(--col);color:#fff;padding:0 4px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px}
-.pill[data-l=C],.dc[data-l=C]{color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #FFB000;outline-offset:2px}
+.tools{margin:14px 0 4px}
+label.sw{display:flex;gap:6px;align-items:center;font-size:15px;cursor:pointer}
+.link{background:none;border:0;color:var(--accent);font:600 15px "DM Sans",sans-serif;cursor:pointer;text-decoration:underline;padding:6px}
+#count{color:var(--mute);font-size:14px;margin-left:auto}
+#lab{font:800 22px "Bricolage Grotesque",sans-serif;min-width:150px;text-align:center;text-transform:capitalize}
+main{padding:12px 0 60px}
+.dash{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin:16px 0 8px}
+.t1,.t2{border-radius:24px;padding:28px}
+.t1{background:var(--accent);color:#fff}.t2{background:var(--ink);color:#fff}
+.t1 p{margin:4px 0 0;color:#E3EDFF}
+.u{font:700 13px "DM Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.tg{background:#C8161D;padding:6px 12px;border-radius:99px}
+.big{font:800 clamp(56px,10vw,110px)/1 "Bricolage Grotesque",sans-serif;margin:20px 0 8px}
+.lieu{font:700 34px/1.1 "Bricolage Grotesque",sans-serif}
+.big2{font:800 72px/1 "Bricolage Grotesque",sans-serif;margin:8px 0}
+.bar2{display:flex;height:14px;border-radius:99px;overflow:hidden;gap:2px;margin:18px 0 10px}.bar2 i{display:block}
+.leg{font-size:13px;color:#B9C7F0}
+h2{font:800 28px "Bricolage Grotesque",sans-serif;margin:32px 0 8px;text-align:center;text-transform:capitalize}
+h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin-left:10px}
+.r{display:grid;grid-template-columns:1fr 72px 1fr;grid-template-areas:"l m r"}
+.m{grid-area:m;display:flex;justify-content:center;align-items:center;background:linear-gradient(var(--accent),var(--accent)) center/4px 100% no-repeat}
+.m i{width:9px;height:52px;border-radius:5px;margin:0 3px;background:#C8161D;box-shadow:0 0 0 4px var(--bg)}.m i+i{background:#0B2480}
+.k{background:#fff;border-radius:24px;padding:20px 28px;margin:8px 0;align-self:center}
+.k.L{grid-area:l;text-align:right}.k.R{grid-area:r}
+.k b{font:800 32px/1 "Bricolage Grotesque",sans-serif;color:var(--accent);display:block}
+.k h3{margin:6px 0 0;font:700 19px "DM Sans",sans-serif}
+.k p{margin:4px 0 0;font-size:14px;line-height:1.6;color:var(--mute)}
+.k.past{opacity:.5}.k.next{box-shadow:0 0 0 2px var(--accent)}
+.nx{font:700 12px "DM Sans",sans-serif;color:var(--accent);margin-left:8px}
+.tag{display:inline-block;background:var(--col);color:#fff;font:700 12px "DM Sans",sans-serif;letter-spacing:.04em;padding:1px 9px;border-radius:99px;margin-right:8px}
+.tag[data-l=N3],.tag[data-l=R]{color:var(--ink)}
+.empty{text-align:center;color:var(--mute);padding:50px 0}
+.card{background:#fff;border-radius:24px;padding:20px;margin-top:14px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{font:600 13px "DM Sans",sans-serif;color:var(--mute);text-align:center}
+.day{background:#EAF1FD;border:0;border-radius:14px;min-height:92px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:2px;overflow:hidden;text-align:left;font:inherit;color:var(--ink)}
+.day.has{background:#B9C7F0}
+.day.out{background:transparent;cursor:default}
+.day.today{outline:2px solid var(--accent)}.day.sel{outline:3px solid var(--ink)}
+.dn{font:700 14px "DM Sans",sans-serif}
+.pill{display:block;font:600 11px/1.4 "DM Sans",sans-serif;background:var(--col);color:#fff;padding:0 6px;border-radius:99px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px}
+.pill[data-l=N3]{color:var(--ink)}.pill[data-l=R]{background:#0B2480;color:#fff}
 .more{font-size:11px;color:var(--mute)}
+#detail h2{text-align:left;font-size:22px}
 .yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;margin-top:14px}
-.mm{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
-.mt{all:unset;cursor:pointer;display:flex;justify-content:space-between;width:100%;font:700 19px "Barlow Condensed",sans-serif;text-transform:capitalize;margin-bottom:6px}
-.mt small{font:500 13px Barlow,sans-serif;color:var(--mute)}
+.mm{background:#fff;border-radius:24px;padding:16px}
+.mt{all:unset;cursor:pointer;display:flex;justify-content:space-between;width:100%;font:800 19px "Bricolage Grotesque",sans-serif;text-transform:capitalize;margin-bottom:6px}
+.mt small{font:500 13px "DM Sans",sans-serif;color:var(--mute)}
 .mt:focus-visible{outline:3px solid #FFB000}
 .mg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:12px}
 .mg b{color:var(--mute);font-weight:600}
 .mg span,.dc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%}
-.mg span{color:var(--mute)}
-.mg .tdy{outline:2px solid var(--accent)}
-.dc{border:0;background:var(--col);color:#fff;font:600 12px Barlow,sans-serif;padding:0;cursor:pointer}
-@media(max-width:700px){.bar{position:static}}
-@media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}}
+.mg span{color:var(--mute)}.mg .tdy{outline:2px solid var(--accent)}
+.dc{border:0;background:var(--col);color:#fff;font:600 12px "DM Sans",sans-serif;padding:0;cursor:pointer}
+.dc[data-l=N3],.dc[data-l=R]{color:var(--ink)}
+dialog{border:0;border-radius:24px;padding:0;max-width:560px;width:calc(100% - 32px);max-height:88vh;color:var(--ink);background:#fff}
+dialog::backdrop{background:rgba(7,18,63,.55)}
+.hp{padding:28px}
+.hp h2{text-align:left;margin:0 0 6px;font-size:28px}
+.hp h3{font:800 17px "Bricolage Grotesque",sans-serif;margin:20px 0 6px;color:var(--accent)}
+.hp p,.hp li{font-size:15px;line-height:1.55;margin:4px 0}
+.hp ul{padding-left:20px;margin:6px 0}
+.hp .tag{margin:0 4px 0 0}
+.hp .x{display:block;margin:22px 0 0;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
+@media(max-width:760px){.dash{grid-template-columns:1fr}}
+@media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.k.L,.k.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
+@media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>Calendrier Slalom</h1>
-<p>Compétitions à venir, d'octobre 2026 à fin 2027 : N1, N2, N3, régionales, open et championnats. Source : FFCK, édité le 22/10/2026.</p></div></header>
-
-<div class="bar"><div class="wrap">
-<div class="row top"><div class="row" id="views" role="group" aria-label="Affichage">
-<button class="chip" data-v="l" style="--col:var(--ink)">Liste</button>
-<button class="chip" data-v="m" style="--col:var(--ink)">Mois</button>
-<button class="chip" data-v="y" style="--col:var(--ink)">Année</button></div>
-<div class="row" id="nav"><button class="chip" id="prev" style="--col:var(--ink)" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" style="--col:var(--ink)" aria-label="Suivant">›</button><button class="link" id="tod">Aujourd'hui</button></div></div>
-<div class="row" id="chips" role="group" aria-label="Niveau de compétition"></div>
+<div class="top"><div class="wrap">
+<div class="row hd">
+<img class="logo" src="logo-lagny.png" alt="Canoë Kayak Lagny" width="56" height="56">
+<div class="ttl"><h1>Calendrier Slalom</h1><small>Source FFCK, édité le 22/10/2026</small></div>
+<input type="search" id="q" placeholder="Rechercher un lieu, un club…" aria-label="Recherche">
+<div class="seg" id="views" role="group" aria-label="Affichage"><button data-v="l">Liste</button><button data-v="m">Mois</button><button data-v="y">Année</button></div>
+</div>
+<div class="row" id="chips" role="group" aria-label="Niveau de compétition" style="margin-top:18px"></div>
 <div class="row tools">
-<input type="search" id="q" placeholder="Chercher un lieu, un club…" aria-label="Recherche">
 <select id="m" aria-label="Mois"></select>
+<div class="row" id="nav"><button class="chip" id="prev" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" aria-label="Suivant">›</button><button class="link" id="tod">Aujourd'hui</button></div>
 <label class="sw"><input type="checkbox" id="fut"> Masquer les passées</label>
 <button class="link" id="rst">Réinitialiser</button>
+<button class="chip" id="help-btn" aria-haspopup="dialog">? Comment ça marche</button>
 <span id="count" aria-live="polite"></span>
 </div></div></div>
+<main><div class="wrap"><div id="dash"></div><div id="list"></div></div></main>
 
-<main><div class="wrap" id="list"></div></main>
-
+<dialog id="help" aria-labelledby="hp-t"><div class="hp">
+<h2 id="hp-t">Comment ça marche ?</h2>
+<p>Ce calendrier regroupe les compétitions de slalom à venir (octobre 2026 à fin 2027), d'après le calendrier officiel de la FFCK.</p>
+<h3>Choisir l'affichage</h3>
+<ul>
+<li><b>Liste</b> : toutes les courses classées par mois. La carte bleue indique la prochaine course et les jours restants.</li>
+<li><b>Mois</b> : un calendrier classique. Les jours avec une course sont colorés : clique sur un jour pour voir le détail.</li>
+<li><b>Année</b> : les 12 mois d'un coup pour repérer les périodes chargées. Clique sur un jour ou un mois pour l'ouvrir.</li>
+</ul>
+<h3>Filtrer</h3>
+<ul>
+<li>Les boutons de niveau : clique pour garder seulement ceux-là, tu peux en choisir plusieurs. Sans choix, tout s'affiche.</li>
+<li>La recherche : tape un lieu ou un club (par exemple « Metz »).</li>
+<li><b>Masquer les passées</b> cache les courses terminées, <b>Réinitialiser</b> remet tout à zéro.</li>
+</ul>
+<h3>Les couleurs</h3>
+<p><span class="tag" data-l="N1" style="--col:var(--n1)">N1</span><span class="tag" data-l="N2" style="--col:var(--n2)">N2</span><span class="tag" data-l="N3" style="--col:var(--n3)">N3</span><span class="tag" data-l="R" style="--col:var(--r)">Régional</span><span class="tag" data-l="C" style="--col:var(--c)">Championnat</span><span class="tag" data-l="O" style="--col:var(--o)">Open</span></p>
+<h3>Bon à savoir</h3>
+<ul>
+<li>La « prochaine course » se met à jour toute seule avec la date du jour.</li>
+<li>Le lien de la page garde ta vue et tes filtres : tu peux l'envoyer pour montrer la même chose.</li>
+<li>Les dates viennent du calendrier FFCK et peuvent évoluer : en cas de doute, vérifie sur le site de la fédération.</li>
+</ul>
+<button class="x" data-close>Compris</button>
+</div></dialog>
 <script>
 const D=[
 ["2026-10-24","2026-10-25","Sélectif Régional Slalom (Double)","Bizanos","Pau Canoë-Kayak Club Universitaire"],
@@ -191,25 +239,27 @@ function hashLoad(){
   if(/^\d{4}-\d{2}$/.test(p.get("d")||""))st.cm=clampM(p.get("d"));
   $("q").value=st.q;$("m").value=st.m;$("fut").checked=st.fut;
 }
-const card=(x,nx)=>{
-  const multi=x.s!=x.e,[t,c]=L[x.k];
-  const day=multi?(x.s.slice(5,7)==x.e.slice(5,7)?`${+x.s.slice(8)}–${+x.e.slice(8)}`:`${+x.s.slice(8)}→${+x.e.slice(8)}`):+x.s.slice(8);
-  const sub=multi?`${fm(x.s,{weekday:"short"})} → ${fm(x.e,{weekday:"short"})}`:fm(x.s,{weekday:"long"});
-  return `<article class="ev${x.e<today?" past":""}${nx?" next":""}" style="--col:${c}">
-<div class="d"><b>${day}</b><i>${sub}</i></div>
-<div><div class="t"><span class="tag" data-l="${x.k}">${t==="Championnats"?"CF":t==="Régional"?"RÉG":t}</span>${x.l}${nx?'<span class="nx">Prochaine</span>':""}</div>
-<div class="s">${x.n}</div><div class="s">${x.o}</div></div></article>`;
-};
+const dl=x=>{const a=new Date(x.s+"T12:00"),b=new Date(x.e+"T12:00"),mo=d=>d.toLocaleDateString("fr-FR",{month:"short"});
+  if(x.s==x.e)return`${a.getDate()} ${mo(a)}`;
+  return a.getMonth()==b.getMonth()?`${a.getDate()}–${b.getDate()} ${mo(a)}`:`${a.getDate()} ${mo(a)} → ${b.getDate()} ${mo(b)}`};
+const TL={N1:"N1",N2:"N2",N3:"N3",R:"Régional",C:"Championnat",O:"Open"};
+const card=(x,nx,side)=>`<article class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${x.l}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${x.n}<br>${x.o}</p></article>`;
+const dash=r=>{
+  const nx=r.find(x=>x.e>=today);if(!nx)return"";
+  const n=Math.round((new Date(nx.s+"T12:00")-new Date(today+"T12:00"))/864e5);
+  const cnt=k=>r.filter(x=>x.k==k).length,ks=Object.keys(L).filter(k=>cnt(k));
+  const col=k=>k=="C"?"#fff":k=="O"?"#9FB2E8":L[k][1];
+  return`<div class="dash"><div class="t1"><span class="u tg">Prochaine course</span><div class="big">${n>0?"J-"+n:"En cours"}</div><div class="lieu">${nx.l}</div><p>${nx.n} · ${dl(nx)}</p><p>${nx.o}</p></div><div class="t2"><div class="u" style="color:#9FB2E8">À venir</div><div class="big2">${r.length}</div><div>compétition${r.length>1?"s":""}</div><div class="bar2">${ks.map(k=>`<i style="flex:${cnt(k)};background:${col(k)}"></i>`).join("")}</div><div class="leg">${ks.map(k=>TL[k]+" "+cnt(k)).join(" · ")}</div></div></div>`};
 const monthView=(m,M)=>{
-  let h='<div class="cal">'+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(w=>`<div class="wd">${w}</div>`).join("");
+  let h='<div class="card"><div class="cal">'+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(w=>`<div class="wd">${w}</div>`).join("");
   cells(m).forEach(d=>{
     if(!d){h+='<div class="day out"></div>';return}
     const ev=M[d]||[],wk=new Date(d+"T12:00").getDay();
-    h+=`<button class="day${wk%6==0?" we":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
+    h+=`<button class="day${ev.length?" has":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
     +ev.slice(0,4).map(x=>`<span class="pill" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?x.l:"&nbsp;"}</span>`).join("")
     +(ev.length>4?`<span class="more">+${ev.length-4}</span>`:"")+"</button>";
   });
-  h+='</div><div id="detail">';
+  h+='</div></div><div id="detail">';
   if(st.sel&&st.sel.startsWith(m)){const e=M[st.sel]||[];h+=`<h2>${fm(st.sel,{weekday:"long",day:"numeric",month:"long"})}</h2>`+(e.length?e.map(x=>card(x)).join(""):'<p class="empty">Aucune compétition ce jour-là.</p>')}
   else h+='<p class="empty">Touchez un jour pour voir le détail.</p>';
   return h+"</div>";
@@ -235,12 +285,14 @@ function render(){
   const q=norm(st.q.trim()),cal=st.v!="l";
   const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
   document.querySelectorAll("#chips .chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
-  document.querySelectorAll("#views .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
+  document.querySelectorAll("#views button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
   $("m").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
   const y=st.cm.slice(0,4);let html,n;
   if(st.v=="l"){
-    const nextId=res.find(x=>x.e>=today);let cur="";html="";
-    res.forEach(x=>{const mo=x.s.slice(0,7);if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}html+=card(x,x===nextId)});
+    const nextId=res.find(x=>x.e>=today);let cur="",i=0;html="";
+    res.forEach(x=>{const mo=x.s.slice(0,7);if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}
+      const L2=i++%2==0,c=card(x,x===nextId,L2?"L":"R");
+      html+=`<div class="r">${L2?c:""}<div class="m"><i></i><i></i></div>${L2?"":c}</div>`});
     html=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';n=res.length;
   }else if(st.v=="m"){
     html=monthView(st.cm,byDay(res));n=res.filter(x=>x.s.slice(0,7)<=st.cm&&x.e.slice(0,7)>=st.cm).length;
@@ -251,6 +303,7 @@ function render(){
     $("lab").textContent=y;
     $("prev").disabled=+y<=+minM.slice(0,4);$("next").disabled=+y>=+maxM.slice(0,4);
   }
+  $("dash").innerHTML=st.v=="l"?dash(res):"";
   $("list").innerHTML=html;
   $("count").textContent=n+" compétition"+(n>1?"s":"");
   hashSave();
@@ -270,6 +323,7 @@ $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
 $("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
+const hp=$("help");$("help-btn").onclick=()=>hp.showModal();hp.onclick=e=>{if(e.target===hp||e.target.closest("[data-close]"))hp.close()};
 hashLoad();render();
 </script>
 </body>
