@@ -46,6 +46,33 @@ h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
 .nx{font:600 12px Barlow,sans-serif;color:var(--col);margin-left:6px}
 .empty{text-align:center;color:var(--mute);padding:50px 0}
 @media(max-width:520px){.ev{grid-template-columns:58px 1fr;gap:10px}.d b{font-size:28px}#count{width:100%;margin:0}}
+.top{justify-content:space-between;margin-bottom:8px}
+.chip:disabled{opacity:.35;cursor:default}
+#lab{font:700 22px "Barlow Condensed",sans-serif;min-width:130px;text-align:center;text-transform:capitalize}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:14px}
+.wd{font:600 13px Barlow,sans-serif;color:var(--mute);text-align:center}
+.day{background:#fff;border:1px solid var(--line);border-radius:8px;min-height:92px;padding:4px;cursor:pointer;display:flex;flex-direction:column;gap:2px;overflow:hidden;text-align:left;font:inherit;color:inherit}
+.day.out{background:transparent;border-color:transparent;cursor:default}
+.day.we{background:#F6F9FA}
+.day.today{outline:2px solid var(--accent)}
+.day.sel{outline:3px solid var(--ink)}
+.dn{font:700 15px "Barlow Condensed",sans-serif;color:var(--mute)}
+.pill{display:block;font:600 11px/1.35 Barlow,sans-serif;background:var(--col);color:#fff;padding:0 4px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px}
+.pill[data-l=C],.dc[data-l=C]{color:var(--ink)}
+.more{font-size:11px;color:var(--mute)}
+.yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;margin-top:14px}
+.mm{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+.mt{all:unset;cursor:pointer;display:flex;justify-content:space-between;width:100%;font:700 19px "Barlow Condensed",sans-serif;text-transform:capitalize;margin-bottom:6px}
+.mt small{font:500 13px Barlow,sans-serif;color:var(--mute)}
+.mt:focus-visible{outline:3px solid #FFB000}
+.mg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:12px}
+.mg b{color:var(--mute);font-weight:600}
+.mg span,.dc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.mg span{color:var(--mute)}
+.mg .tdy{outline:2px solid var(--accent)}
+.dc{border:0;background:var(--col);color:#fff;font:600 12px Barlow,sans-serif;padding:0;cursor:pointer}
+@media(max-width:700px){.bar{position:static}}
+@media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -54,6 +81,11 @@ h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
 <p>Compétitions à venir, d'octobre 2026 à fin 2027 : N1, N2, N3, régionales, open et championnats. Source : FFCK, édité le 22/10/2026.</p></div></header>
 
 <div class="bar"><div class="wrap">
+<div class="row top"><div class="row" id="views" role="group" aria-label="Affichage">
+<button class="chip" data-v="l" style="--col:var(--ink)">Liste</button>
+<button class="chip" data-v="m" style="--col:var(--ink)">Mois</button>
+<button class="chip" data-v="y" style="--col:var(--ink)">Année</button></div>
+<div class="row" id="nav"><button class="chip" id="prev" style="--col:var(--ink)" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" style="--col:var(--ink)" aria-label="Suivant">›</button><button class="link" id="tod">Aujourd'hui</button></div></div>
 <div class="row" id="chips" role="group" aria-label="Niveau de compétition"></div>
 <div class="row tools">
 <input type="search" id="q" placeholder="Chercher un lieu, un club…" aria-label="Recherche">
@@ -95,6 +127,7 @@ const D=[
 ["2027-02-27","2027-02-28","Manche de la Coupe de France National 1","Vaires-sur-Marne","Comité Régional Île-de-France CK"],
 ["2027-03-06","2027-03-07","Manche de la Coupe de France National 2","Le Bourget-du-Lac","Chambéry Le Bourget Canoë Kayak"],
 ["2027-03-06","2027-03-07","Manche de la Coupe de France National 2","Lannion","Lannion Canoë Kayak"],
+["2027-03-27","2027-03-28","Manche de la Coupe de France National 1","Cesson-Sévigné","Cesson Sévigné CK Les Poissons Volants"],
 ["2027-03-27","2027-03-29","Manche de la Coupe de France National 1","Cesson-Sévigné","Cesson Sévigné CK Les Poissons Volants"],
 ["2027-04-03","2027-04-03","Championnat Régional de Slalom","Sainte-Suzanne","Niagara Canoë Kayak Club"],
 ["2027-04-03","2027-04-04","Manche de la Coupe de France National 2","Châteauneuf-sur-Cher","Châteauneuf Pagaie Aventure"],
@@ -129,11 +162,17 @@ E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
 const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
 const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
 const today=new Date().toISOString().slice(0,10);
-const st={k:new Set(),q:"",m:"",fut:false};
+const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:""};
+const pad=n=>String(n).padStart(2,"0");
+const minM=E[0].s.slice(0,7),maxM=E[E.length-1].e.slice(0,7);
+const clampM=m=>m<minM?minM:m>maxM?maxM:m;
+const shift=(m,k)=>{const[y,o]=m.split("-").map(Number),d=new Date(y,o-1+k,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
+const add=d=>{const t=new Date(d+"T12:00");t.setDate(t.getDate()+1);return t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate())};
+const byDay=r=>{const M={};r.forEach(x=>{let d=x.s;while(d<=x.e){(M[d]=M[d]||[]).push(x);d=add(d)}});return M};
+const cells=m=>{const[y,o]=m.split("-").map(Number),n=new Date(y,o,0).getDate(),f=(new Date(y,o-1,1).getDay()+6)%7,a=Array(f).fill(null);for(let d=1;d<=n;d++)a.push(m+"-"+pad(d));return a};
+st.cm=clampM(today.slice(0,7));
 
-// Chips
 $("chips").innerHTML=Object.entries(L).map(([k,[t,c]])=>`<button class="chip" data-l="${k}" style="--col:${c}" aria-pressed="false">${t}<small>${E.filter(x=>x.k==k).length}</small></button>`).join("");
-// Mois
 const ms=[...new Set(E.map(x=>x.s.slice(0,7)))];
 $("m").innerHTML='<option value="">Tous les mois</option>'+ms.map(m=>`<option value="${m}">${mois(m+"-01")}</option>`).join("");
 
@@ -141,36 +180,92 @@ function hashSave(){
   const p=new URLSearchParams();
   if(st.k.size)p.set("n",[...st.k].join(","));
   if(st.q)p.set("q",st.q);if(st.m)p.set("m",st.m);if(st.fut)p.set("f","1");
+  if(st.v!="l"){p.set("v",st.v);p.set("d",st.cm)}
   history.replaceState(null,"",p.toString()?"#"+p:location.pathname);
 }
 function hashLoad(){
   const p=new URLSearchParams(location.hash.slice(1));
   st.k=new Set((p.get("n")||"").split(",").filter(k=>L[k]));
   st.q=p.get("q")||"";st.m=p.get("m")||"";st.fut=p.get("f")=="1";
+  st.v=["l","m","y"].includes(p.get("v"))?p.get("v"):"l";
+  if(/^\d{4}-\d{2}$/.test(p.get("d")||""))st.cm=clampM(p.get("d"));
   $("q").value=st.q;$("m").value=st.m;$("fut").checked=st.fut;
 }
-function render(){
-  const q=norm(st.q.trim());
-  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
-  document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
-  $("count").textContent=res.length+" compétition"+(res.length>1?"s":"");
-  const nextId=res.find(x=>x.e>=today);
-  let html="",cur="";
-  res.forEach(x=>{
-    const mo=x.s.slice(0,7);
-    if(mo!=cur){cur=mo;const n=res.filter(y=>y.s.startsWith(mo)).length;html+=`<h2>${mois(mo+"-01")}<span>${n}</span></h2>`}
-    const multi=x.s!=x.e,[t,c]=L[x.k];
-    const day=multi?(x.s.slice(5,7)==x.e.slice(5,7)?`${+x.s.slice(8)}–${+x.e.slice(8)}`:`${+x.s.slice(8)}→${+x.e.slice(8)}`):+x.s.slice(8);
-    const sub=multi?`${fm(x.s,{weekday:"short"})} → ${fm(x.e,{weekday:"short"})}`:fm(x.s,{weekday:"long"});
-    html+=`<article class="ev${x.e<today?" past":""}${x===nextId?" next":""}" style="--col:${c}">
+const card=(x,nx)=>{
+  const multi=x.s!=x.e,[t,c]=L[x.k];
+  const day=multi?(x.s.slice(5,7)==x.e.slice(5,7)?`${+x.s.slice(8)}–${+x.e.slice(8)}`:`${+x.s.slice(8)}→${+x.e.slice(8)}`):+x.s.slice(8);
+  const sub=multi?`${fm(x.s,{weekday:"short"})} → ${fm(x.e,{weekday:"short"})}`:fm(x.s,{weekday:"long"});
+  return `<article class="ev${x.e<today?" past":""}${nx?" next":""}" style="--col:${c}">
 <div class="d"><b>${day}</b><i>${sub}</i></div>
-<div><div class="t"><span class="tag" data-l="${x.k}">${t==="Championnats"?"CF":t==="Régional"?"RÉG":t}</span>${x.l}${x===nextId?'<span class="nx">Prochaine</span>':""}</div>
+<div><div class="t"><span class="tag" data-l="${x.k}">${t==="Championnats"?"CF":t==="Régional"?"RÉG":t}</span>${x.l}${nx?'<span class="nx">Prochaine</span>':""}</div>
 <div class="s">${x.n}</div><div class="s">${x.o}</div></div></article>`;
+};
+const monthView=(m,M)=>{
+  let h='<div class="cal">'+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(w=>`<div class="wd">${w}</div>`).join("");
+  cells(m).forEach(d=>{
+    if(!d){h+='<div class="day out"></div>';return}
+    const ev=M[d]||[],wk=new Date(d+"T12:00").getDay();
+    h+=`<button class="day${wk%6==0?" we":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
+    +ev.slice(0,4).map(x=>`<span class="pill" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?x.l:"&nbsp;"}</span>`).join("")
+    +(ev.length>4?`<span class="more">+${ev.length-4}</span>`:"")+"</button>";
   });
-  $("list").innerHTML=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';
+  h+='</div><div id="detail">';
+  if(st.sel&&st.sel.startsWith(m)){const e=M[st.sel]||[];h+=`<h2>${fm(st.sel,{weekday:"long",day:"numeric",month:"long"})}</h2>`+(e.length?e.map(x=>card(x)).join(""):'<p class="empty">Aucune compétition ce jour-là.</p>')}
+  else h+='<p class="empty">Touchez un jour pour voir le détail.</p>';
+  return h+"</div>";
+};
+const PR=["C","N1","N2","N3","R","O"];
+const yearView=(y,r,M)=>{
+  let h='<div class="yr">';
+  for(let o=1;o<=12;o++){
+    const m=y+"-"+pad(o),c=r.filter(x=>x.s.slice(0,7)<=m&&x.e.slice(0,7)>=m).length;
+    h+=`<div class="mm"><button class="mt" data-m="${m}"><span>${mois(m+"-01").split(" ")[0]}</span><small>${c||""}</small></button><div class="mg">`
+    +"LMMJVSD".split("").map(w=>`<b>${w}</b>`).join("")
+    +cells(m).map(d=>{
+      if(!d)return"<i></i>";
+      const ev=M[d];
+      if(!ev)return`<span${d==today?' class="tdy"':""}>${+d.slice(8)}</span>`;
+      const k=PR.find(p=>ev.some(x=>x.k==p));
+      return`<button class="dc" data-d="${d}" data-l="${k}" style="--col:${L[k][1]}" title="${ev.length} compétition(s)">${+d.slice(8)}</button>`;
+    }).join("")+"</div></div>";
+  }
+  return h+"</div>";
+};
+function render(){
+  const q=norm(st.q.trim()),cal=st.v!="l";
+  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
+  document.querySelectorAll("#chips .chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
+  document.querySelectorAll("#views .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
+  $("m").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
+  const y=st.cm.slice(0,4);let html,n;
+  if(st.v=="l"){
+    const nextId=res.find(x=>x.e>=today);let cur="";html="";
+    res.forEach(x=>{const mo=x.s.slice(0,7);if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}html+=card(x,x===nextId)});
+    html=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';n=res.length;
+  }else if(st.v=="m"){
+    html=monthView(st.cm,byDay(res));n=res.filter(x=>x.s.slice(0,7)<=st.cm&&x.e.slice(0,7)>=st.cm).length;
+    $("lab").textContent=mois(st.cm+"-01");
+    $("prev").disabled=st.cm<=minM;$("next").disabled=st.cm>=maxM;
+  }else{
+    html=yearView(y,res,byDay(res));n=res.filter(x=>x.s.slice(0,4)<=y&&x.e.slice(0,4)>=y).length;
+    $("lab").textContent=y;
+    $("prev").disabled=+y<=+minM.slice(0,4);$("next").disabled=+y>=+maxM.slice(0,4);
+  }
+  $("list").innerHTML=html;
+  $("count").textContent=n+" compétition"+(n>1?"s":"");
   hashSave();
 }
+const go=k=>{st.cm=clampM(shift(st.cm,st.v=="y"?12*k:k));st.sel="";render()};
 $("chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const k=b.dataset.l;st.k.has(k)?st.k.delete(k):st.k.add(k);render()};
+$("views").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;st.v=b.dataset.v;st.sel="";render()};
+$("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);
+$("tod").onclick=()=>{st.cm=clampM(today.slice(0,7));st.sel=st.v=="m"&&today.startsWith(st.cm)?today:"";render()};
+$("list").onclick=e=>{
+  const b=e.target.closest("[data-d],[data-m]");if(!b)return;
+  if(b.dataset.m){st.v="m";st.cm=b.dataset.m;st.sel=""}
+  else{const d=b.dataset.d;st.cm=d.slice(0,7);st.v="m";st.sel=d}
+  render();const dt=$("detail");if(st.sel&&dt)dt.scrollIntoView({block:"nearest"});
+};
 $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
