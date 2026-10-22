@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendrier Slalom 2027</title>
+<meta name="description" content="Calendrier des compétitions de slalom 2027 : N1, N2, N3, régionales et championnats, avec filtres.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF4F5;--card:#fff;--ink:#0E2A3A;--mute:#5B7280;--line:#D5E1E5;--accent:#0B6E8A;
+--n1:#C8302B;--n2:#1E7F4F;--n3:#0B6E8A;--r:#7A5AA6;--c:#E0A100}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
+header{background:var(--ink);color:#fff;padding:28px 20px 22px}
+.wrap{max-width:900px;margin:0 auto}
+h1{font:700 clamp(34px,7vw,56px)/1 "Barlow Condensed",Impact,sans-serif;margin:0 0 6px;letter-spacing:.5px}
+header p{margin:0;color:#A9C4CE}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 20px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:2px solid var(--col,var(--ink));background:#fff;color:var(--ink);border-radius:999px;padding:7px 14px;font:600 15px Barlow,sans-serif;cursor:pointer;transition:background .15s,color .15s}
+.chip[aria-pressed=true]{background:var(--col);color:#fff}
+.chip[data-l=C][aria-pressed=true]{color:var(--ink)}
+.chip small{opacity:.75;margin-left:4px}
+.chip:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #FFB000;outline-offset:2px}
+.tools{margin-top:10px}
+input[type=search],select{font:500 15px Barlow,sans-serif;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input[type=search]{flex:1 1 200px;min-width:0}
+label.sw{display:flex;gap:6px;align-items:center;font-size:15px;cursor:pointer}
+.link{background:none;border:0;color:var(--accent);font:600 15px Barlow,sans-serif;cursor:pointer;text-decoration:underline;padding:6px}
+#count{color:var(--mute);font-size:14px;margin-left:auto}
+main{padding:8px 20px 60px}
+h2{font:700 26px "Barlow Condensed",sans-serif;margin:28px 0 10px;text-transform:capitalize;display:flex;align-items:baseline;gap:10px}
+h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
+.ev{display:grid;grid-template-columns:72px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--col);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.ev.past{opacity:.5}
+.ev.next{box-shadow:0 0 0 2px var(--col)}
+.d{text-align:center;line-height:1}
+.d b{display:block;font:700 34px "Barlow Condensed",sans-serif}
+.d i{font-style:normal;font-size:13px;color:var(--mute);text-transform:capitalize}
+.t{font-weight:600;font-size:18px;line-height:1.2}
+.s{color:var(--mute);font-size:14px;margin-top:2px}
+.tag{display:inline-block;background:var(--col);color:#fff;font:700 13px "Barlow Condensed",sans-serif;letter-spacing:.5px;padding:1px 8px;border-radius:4px;margin-right:6px;vertical-align:2px}
+.tag[data-l=C]{color:var(--ink)}
+.nx{font:600 12px Barlow,sans-serif;color:var(--col);margin-left:6px}
+.empty{text-align:center;color:var(--mute);padding:50px 0}
+@media(max-width:520px){.ev{grid-template-columns:58px 1fr;gap:10px}.d b{font-size:28px}#count{width:100%;margin:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Calendrier Slalom 2027</h1>
+<p>Coupe de France N1, N2, N3, régionales et championnats. Source : FFCK, édité le 22/10/2026.</p></div></header>
+
+<div class="bar"><div class="wrap">
+<div class="row" id="chips" role="group" aria-label="Niveau de compétition"></div>
+<div class="row tools">
+<input type="search" id="q" placeholder="Chercher un lieu, un club…" aria-label="Recherche">
+<select id="m" aria-label="Mois"></select>
+<label class="sw"><input type="checkbox" id="fut"> Masquer les passées</label>
+<button class="link" id="rst">Réinitialiser</button>
+<span id="count" aria-live="polite"></span>
+</div></div></div>
+
+<main><div class="wrap" id="list"></div></main>
+
+<script>
+const D=[
+["2027-01-17","2027-01-17","Compétition Régionale de Slalom","Guingamp","C.K.C. Guingampais"],
+["2027-01-23","2027-01-23","Championnat Régional de Slalom","Sainte-Suzanne","Niagara Canoë Kayak Club"],
+["2027-01-31","2027-01-31","Sélectif Régional de slalom","Landerneau","Les Alligators - Landerneau"],
+["2027-02-07","2027-02-07","Sélectif Régional de slalom","Mehun-sur-Yèvre","Canoë Kayak Club de Mehun"],
+["2027-02-20","2027-02-21","Manche de la Coupe de France National 3","Clisson","Canoë Kayak Clisson"],
+["2027-02-20","2027-02-21","Manche de la Coupe de France National 3","Montreuil","Canoë Kayak Montreuil"],
+["2027-02-20","2027-02-21","Manche de la Coupe de France National 3","Vallon-Pont-d'Arc","V.P.A. Pont d'Arc"],
+["2027-02-20","2027-02-21","Manche de la Coupe de France National 3","Strasbourg","ASCPA C.K. Strasbourg"],
+["2027-02-20","2027-02-21","Manche de la Coupe de France National 3","Saint-Benoît","Canoë Kayak Club Poitevin"],
+["2027-02-27","2027-02-28","Manche de la Coupe de France National 1","Vaires-sur-Marne","Comité Régional Île-de-France CK"],
+["2027-03-06","2027-03-07","Manche de la Coupe de France National 2","Le Bourget-du-Lac","Chambéry Le Bourget Canoë Kayak"],
+["2027-03-06","2027-03-07","Manche de la Coupe de France National 2","Lannion","Lannion Canoë Kayak"],
+["2027-03-27","2027-03-28","Manche de la Coupe de France National 1","Cesson-Sévigné","Cesson Sévigné CK Les Poissons Volants"],
+["2027-03-27","2027-03-29","Manche de la Coupe de France National 1","Cesson-Sévigné","Cesson Sévigné CK Les Poissons Volants"],
+["2027-04-03","2027-04-03","Championnat Régional de Slalom","Sainte-Suzanne","Niagara Canoë Kayak Club"],
+["2027-04-03","2027-04-04","Manche de la Coupe de France National 2","Châteauneuf-sur-Cher","Châteauneuf Pagaie Aventure"],
+["2027-04-17","2027-04-18","Manche de la Coupe de France National 3","Sauveterre-de-Béarn","U.S. Sauveterre C.K."],
+["2027-04-17","2027-04-18","Manche de la Coupe de France National 3","Inzinzac-Lochrist","Club Loisirs Pop. Lochrist"],
+["2027-04-17","2027-04-18","Manche de la Coupe de France National 3","Audincourt","C.K. Audincourtois"],
+["2027-04-17","2027-04-18","Manche de la Coupe de France National 3","Chancia","Eaux Vives Oyonnax C.K."],
+["2027-04-17","2027-04-18","Manche de la Coupe de France National 3","Brionne","Canoë Kayak Club Brionne"],
+["2027-05-01","2027-05-02","Manche de la Coupe de France National 3","Veigne","Val de l'Indre Canoë Kayak"],
+["2027-05-01","2027-05-02","Manche de la Coupe de France National 3","Millau","CK MJC Millau"],
+["2027-05-06","2027-05-07","Manche de la Coupe de France National 3","Beaurainville","C.K.C. Beaurainvillois"],
+["2027-05-15","2027-05-17","Manche de la Coupe de France National 2","Metz","Kayak Club de Metz"],
+["2027-05-22","2027-05-23","Manche de la Coupe de France National 1","Foix","Foix Canoë Kayak Eau Vive"],
+["2027-06-05","2027-06-06","Finale de la Coupe de France National 2","Orthez","Orthez Nautique C.K."],
+["2027-06-12","2027-06-13","Manche de la Coupe de France National 3","Saint-Pierre-de-Bœuf","Grenoble Alpes Canoë Kayak"],
+["2027-06-12","2027-06-13","Manche de la Coupe de France National 3","Sélestat","C.K.C. de l'Ill Sélestat"],
+["2027-06-12","2027-06-13","Manche de la Coupe de France National 3","Angoulême","Angoulême Canoë Kayak"],
+["2027-06-20","2027-06-20","Compétition Régionale de Slalom","Plumeliau-Bieuzy","Plumeliau Canoë Kayak"],
+["2027-07-19","2027-07-25","Manche de la Coupe de France National 1","Bourg-Saint-Maurice","Comité Régional CK Auvergne-Rhône-Alpes"],
+["2027-07-19","2027-07-25","Championnat de France Slalom Jeunes et Équipages","Bourg-Saint-Maurice","Comité Régional CK Auvergne-Rhône-Alpes"],
+["2027-07-19","2027-07-25","Championnat de France Slalom par Équipe de Clubs","Bourg-Saint-Maurice","Comité Régional CK Auvergne-Rhône-Alpes"],
+["2027-10-09","2027-10-10","Championnat de France Slalom Élite","Épinal","Golbey Épinal St Nabord"],
+["2027-10-30","2027-10-31","Finale de la Coupe de France National 3","Vaires-sur-Marne","Comité Régional Île-de-France CK"]
+];
+const L={N1:["N1","var(--n1)"],N2:["N2","var(--n2)"],N3:["N3","var(--n3)"],R:["Régional","var(--r)"],C:["Championnats","var(--c)"]};
+const lvl=n=>/National 1/.test(n)?"N1":/National 2/.test(n)?"N2":/National 3/.test(n)?"N3":/Régional/.test(n)?"R":"C";
+const E=D.map(([s,e,n,l,o])=>({s,e,n,l,o,k:lvl(n),h:(n+l+o).toLowerCase()}));
+const $=id=>document.getElementById(id);
+const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
+const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
+const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
+const today=new Date().toISOString().slice(0,10);
+const st={k:new Set(),q:"",m:"",fut:false};
+
+// Chips
+$("chips").innerHTML=Object.entries(L).map(([k,[t,c]])=>`<button class="chip" data-l="${k}" style="--col:${c}" aria-pressed="false">${t}<small>${E.filter(x=>x.k==k).length}</small></button>`).join("");
+// Mois
+const ms=[...new Set(E.map(x=>x.s.slice(0,7)))];
+$("m").innerHTML='<option value="">Tous les mois</option>'+ms.map(m=>`<option value="${m}">${mois(m+"-01")}</option>`).join("");
+
+function hashSave(){
+  const p=new URLSearchParams();
+  if(st.k.size)p.set("n",[...st.k].join(","));
+  if(st.q)p.set("q",st.q);if(st.m)p.set("m",st.m);if(st.fut)p.set("f","1");
+  history.replaceState(null,"",p.toString()?"#"+p:location.pathname);
+}
+function hashLoad(){
+  const p=new URLSearchParams(location.hash.slice(1));
+  st.k=new Set((p.get("n")||"").split(",").filter(k=>L[k]));
+  st.q=p.get("q")||"";st.m=p.get("m")||"";st.fut=p.get("f")=="1";
+  $("q").value=st.q;$("m").value=st.m;$("fut").checked=st.fut;
+}
+function render(){
+  const q=norm(st.q.trim());
+  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
+  document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
+  $("count").textContent=res.length+" compétition"+(res.length>1?"s":"");
+  const nextId=res.find(x=>x.e>=today);
+  let html="",cur="";
+  res.forEach(x=>{
+    const mo=x.s.slice(0,7);
+    if(mo!=cur){cur=mo;const n=res.filter(y=>y.s.startsWith(mo)).length;html+=`<h2>${mois(mo+"-01")}<span>${n}</span></h2>`}
+    const multi=x.s!=x.e,[t,c]=L[x.k];
+    const day=multi?(x.s.slice(5,7)==x.e.slice(5,7)?`${+x.s.slice(8)}–${+x.e.slice(8)}`:`${+x.s.slice(8)}→${+x.e.slice(8)}`):+x.s.slice(8);
+    const sub=multi?`${fm(x.s,{weekday:"short"})} → ${fm(x.e,{weekday:"short"})}`:fm(x.s,{weekday:"long"});
+    html+=`<article class="ev${x.e<today?" past":""}${x===nextId?" next":""}" style="--col:${c}">
+<div class="d"><b>${day}</b><i>${sub}</i></div>
+<div><div class="t"><span class="tag" data-l="${x.k}">${t==="Championnats"?"CF":t==="Régional"?"RÉG":t}</span>${x.l}${x===nextId?'<span class="nx">Prochaine</span>':""}</div>
+<div class="s">${x.n}</div><div class="s">${x.o}</div></div></article>`;
+  });
+  $("list").innerHTML=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';
+  hashSave();
+}
+$("chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const k=b.dataset.l;st.k.has(k)?st.k.delete(k):st.k.add(k);render()};
+$("q").oninput=e=>{st.q=e.target.value;render()};
+$("m").onchange=e=>{st.m=e.target.value;render()};
+$("fut").onchange=e=>{st.fut=e.target.checked;render()};
+$("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
+hashLoad();render();
+</script>
+</body>
+</html>
