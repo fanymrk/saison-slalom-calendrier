@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calendrier Slalom 2027</title>
+<title>Calendrier Slalom 2026-2027</title>
 <meta name="description" content="Calendrier des compétitions de slalom 2027 : N1, N2, N3, régionales et championnats, avec filtres.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF4F5;--card:#fff;--ink:#0E2A3A;--mute:#5B7280;--line:#D5E1E5;--accent:#0B6E8A;
---n1:#C8302B;--n2:#1E7F4F;--n3:#0B6E8A;--r:#7A5AA6;--c:#E0A100}
+--n1:#C8302B;--n2:#1E7F4F;--n3:#0B6E8A;--r:#7A5AA6;--c:#E0A100;--o:#4A5D6B}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
 header{background:var(--ink);color:#fff;padding:28px 20px 22px}
@@ -50,8 +50,8 @@ h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>Calendrier Slalom 2027</h1>
-<p>Coupe de France N1, N2, N3, régionales et championnats. Source : FFCK, édité le 22/10/2026.</p></div></header>
+<header><div class="wrap"><h1>Calendrier Slalom</h1>
+<p>Compétitions à venir, d'octobre 2026 à fin 2027 : N1, N2, N3, régionales, open et championnats. Source : FFCK, édité le 22/10/2026.</p></div></header>
 
 <div class="bar"><div class="wrap">
 <div class="row" id="chips" role="group" aria-label="Niveau de compétition"></div>
@@ -67,6 +67,22 @@ h2 span{font:500 14px Barlow,sans-serif;color:var(--mute)}
 
 <script>
 const D=[
+["2026-10-24","2026-10-25","Sélectif Régional Slalom (Double)","Bizanos","Pau Canoë-Kayak Club Universitaire"],
+["2026-10-24","2026-10-25","Compétition Régionale de Slalom","Bizanos","Pau Canoë-Kayak Club Universitaire"],
+["2026-10-31","2026-11-01","Sélectif Régional de slalom","Foix","Foix Canoë Kayak Eau Vive"],
+["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Cessenon-sur-Orb","Canoë Kayak Club Cessenon"],
+["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Metz","Comité Régional Grand Est CK"],
+["2026-11-14","2026-11-15","Compétition Régionale de Slalom","Val-de-Reuil","Val de Reuil Pagaie Passion"],
+["2026-11-14","2026-11-15","Sélectif Régional Slalom (Double)","Orthez","Orthez Nautique C.K."],
+["2026-11-15","2026-11-15","Compétition Régionale de Slalom","Picquigny","Picquigny Vieille Somme"],
+["2026-11-21","2026-11-22","Sélectif Régional Slalom (Double)","Nay","U.S.C. Nay Canoë Kayak"],
+["2026-11-21","2026-11-22","Sélectif Régional Slalom (Double)","Angoulême","Angoulême Canoë Kayak"],
+["2026-11-28","2026-11-28","Short Race Beaurainville","Beaurainville","C.K.C. Beaurainvillois",1],
+["2026-11-29","2026-11-29","Championnat Régional de Slalom","Beaurainville","C.K.C. Beaurainvillois"],
+["2026-11-29","2026-11-29","Compétition Régionale de Slalom","Lannion","Lannion Canoë Kayak"],
+["2026-12-06","2026-12-06","Sélectif Régional de slalom","Pont-Aven","La Pagaie des Avens"],
+["2026-12-12","2026-12-13","Championnat Régional de Slalom","Inzinzac-Lochrist","Club Loisirs Pop. Lochrist"],
+["2026-12-12","2026-12-13","Compétition Régionale de Slalom","Mirande","Club Mirandais de Canoë Kayak"],
 ["2027-01-17","2027-01-17","Compétition Régionale de Slalom","Guingamp","C.K.C. Guingampais"],
 ["2027-01-23","2027-01-23","Championnat Régional de Slalom","Sainte-Suzanne","Niagara Canoë Kayak Club"],
 ["2027-01-31","2027-01-31","Sélectif Régional de slalom","Landerneau","Les Alligators - Landerneau"],
@@ -104,11 +120,12 @@ const D=[
 ["2027-10-09","2027-10-10","Championnat de France Slalom Élite","Épinal","Golbey Épinal St Nabord"],
 ["2027-10-30","2027-10-31","Finale de la Coupe de France National 3","Vaires-sur-Marne","Comité Régional Île-de-France CK"]
 ];
-const L={N1:["N1","var(--n1)"],N2:["N2","var(--n2)"],N3:["N3","var(--n3)"],R:["Régional","var(--r)"],C:["Championnats","var(--c)"]};
+const L={N1:["N1","var(--n1)"],N2:["N2","var(--n2)"],N3:["N3","var(--n3)"],R:["Régional","var(--r)"],C:["Championnats","var(--c)"],O:["Open","var(--o)"]};
 const lvl=n=>/National 1/.test(n)?"N1":/National 2/.test(n)?"N2":/National 3/.test(n)?"N3":/Régional/.test(n)?"R":"C";
-const E=D.map(([s,e,n,l,o])=>({s,e,n,l,o,k:lvl(n),h:(n+l+o).toLowerCase()}));
+const E=D.map(([s,e,n,l,o,op])=>({s,e,n,l,o,k:op?"O":lvl(n),h:(n+l+o).toLowerCase()}));
 const $=id=>document.getElementById(id);
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+E.sort((a,b)=>a.s.localeCompare(b.s)||a.e.localeCompare(b.e));
 E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
 const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
 const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
