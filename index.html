@@ -54,7 +54,7 @@ h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin-left:10px}
 .m{grid-area:m;display:flex;justify-content:center;align-items:center;background:linear-gradient(var(--accent),var(--accent)) center/4px 100% no-repeat}
 .m i{width:9px;height:52px;border-radius:5px;margin:0 3px;background:#C8161D;box-shadow:0 0 0 4px var(--bg)}.m i+i{background:#0B2480}
 .k{background:#fff;border-radius:24px;padding:20px 28px;margin:8px 0;align-self:center}
-.k.L{grid-area:l;text-align:right}.k.R{grid-area:r}
+.cg{align-self:center}.cg.L{grid-area:l;text-align:right}.cg.R{grid-area:r}
 .k b{font:800 32px/1 "Bricolage Grotesque",sans-serif;color:var(--accent);display:block}
 .k h3{margin:6px 0 0;font:700 19px "DM Sans",sans-serif}
 .k p{margin:4px 0 0;font-size:14px;line-height:1.6;color:var(--mute)}
@@ -96,7 +96,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .hp .tag{margin:0 4px 0 0}
 .hp .x{display:block;margin:22px 0 0;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
-@media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.k.L,.k.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
+@media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
 @media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -148,6 +148,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <script>
 const D=[
 ["2026-10-24","2026-10-25","Sélectif Régional Slalom (Double)","Bizanos","Pau Canoë-Kayak Club Universitaire"],
+["2026-10-24","2026-10-25","Compétition Régionale de Slalom","Bizanos","Pau Canoë-Kayak Club Universitaire"],
 ["2026-10-31","2026-11-01","Sélectif Régional de slalom","Foix","Foix Canoë Kayak Eau Vive"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Cessenon-sur-Orb","Canoë Kayak Club Cessenon"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Metz","Comité Régional Grand Est CK"],
@@ -289,9 +290,15 @@ function render(){
   const y=st.cm.slice(0,4);let html,n;
   if(st.v=="l"){
     const nextId=res.find(x=>x.e>=today);let cur="",i=0;html="";
-    res.forEach(x=>{const mo=x.s.slice(0,7);if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}
-      const L2=i++%2==0,c=card(x,x===nextId,L2?"L":"R");
-      html+=`<div class="r">${L2?c:""}<div class="m"><i></i><i></i></div>${L2?"":c}</div>`});
+    const wk=x=>{const t=new Date(x.s+"T12:00");t.setDate(t.getDate()-(t.getDay()+6)%7);return t.toISOString().slice(0,10)};
+    for(let a=0;a<res.length;){
+      let b=a+1;while(b<res.length&&wk(res[b])==wk(res[a]))b++;
+      const g=res.slice(a,b),mo=g[0].s.slice(0,7);
+      if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}
+      const side=i++%2==0?"L":"R",c=`<div class="cg ${side}">${g.map(x=>card(x,x===nextId)).join("")}</div>`;
+      html+=`<div class="r">${side=="L"?c:""}<div class="m"><i></i><i></i></div>${side=="R"?c:""}</div>`;
+      a=b;
+    }
     html=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';n=res.length;
   }else if(st.v=="m"){
     html=monthView(st.cm,byDay(res));n=res.filter(x=>x.s.slice(0,7)<=st.cm&&x.e.slice(0,7)>=st.cm).length;
