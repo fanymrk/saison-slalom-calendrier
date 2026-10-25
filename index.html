@@ -103,6 +103,10 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .mc{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0;font-size:14px}.mc label{display:flex;gap:4px;align-items:center}.sep{width:1px;background:var(--line)}
 .ma{display:flex;gap:6px;flex-wrap:wrap}
 .guest{font:600 13px "DM Sans",sans-serif;color:var(--mute)}
+.cl{display:inline-block;background:#E3EDFF;color:#0B2480;font:700 12px "DM Sans",sans-serif;padding:3px 10px;border-radius:99px;margin-top:8px}
+.k[data-id]:not([data-id=""]){cursor:pointer}.k:focus-visible{outline:3px solid #FFB000}
+.hp textarea,.hp select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:500 15px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink);background:#fff}
+#fiche{max-width:640px}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
 @media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
@@ -155,6 +159,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 </ul>
 <button class="x" data-close>Compris</button>
 </div></dialog>
+<dialog id="fiche" aria-label="Fiche de la compétition"><div class="hp" id="fiche-c"></div></dialog>
 <dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
 <h2 id="lg-t">Connexion membre</h2>
 <p>Réservé aux adhérents de CK Lagny. Sans compte, tu consultes le calendrier public en invité.</p>
@@ -236,7 +241,7 @@ const D=[
 ];
 const L={N1:["N1","var(--n1)"],N2:["N2","var(--n2)"],N3:["N3","var(--n3)"],R:["Régional","var(--r)"],C:["Championnats","var(--c)"],O:["Open","var(--o)"]};
 const lvl=n=>/National 1/.test(n)?"N1":/National 2/.test(n)?"N2":/National 3/.test(n)?"N3":/Régional/.test(n)?"R":"C";
-const E=D.map(([s,e,n,l,o,op])=>({s,e,n,l,o,k:op?"O":lvl(n),h:(n+l+o).toLowerCase()}));
+let E=D.map(([s,e,n,l,o,op])=>({s,e,n,l,o,k:op?"O":lvl(n),h:(n+l+o).toLowerCase()}));
 const $=id=>document.getElementById(id);
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 E.sort((a,b)=>a.s.localeCompare(b.s)||a.e.localeCompare(b.e));
@@ -277,20 +282,20 @@ const dl=x=>{const a=new Date(x.s+"T12:00"),b=new Date(x.e+"T12:00"),mo=d=>d.toL
   if(x.s==x.e)return`${a.getDate()} ${mo(a)}`;
   return a.getMonth()==b.getMonth()?`${a.getDate()}–${b.getDate()} ${mo(a)}`:`${a.getDate()} ${mo(a)} → ${b.getDate()} ${mo(b)}`};
 const TL={N1:"N1",N2:"N2",N3:"N3",R:"Régional",C:"Championnat",O:"Open"};
-const card=(x,nx,side)=>`<article class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${x.l}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${x.n}<br>${x.o}</p></article>`;
+const card=(x,nx,side)=>`<article tabindex="0" data-id="${x.id||""}" class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${esc(x.l)}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${esc(x.n)}<br>${esc(x.o)}</p>${pastille(x)}</article>`;
 const dash=r=>{
   const nx=r.find(x=>x.e>=today);if(!nx)return"";
   const n=Math.round((new Date(nx.s+"T12:00")-new Date(today+"T12:00"))/864e5);
   const cnt=k=>r.filter(x=>x.k==k).length,ks=Object.keys(L).filter(k=>cnt(k));
   const col=k=>k=="C"?"#fff":k=="O"?"#9FB2E8":L[k][1];
-  return`<div class="dash"><div class="t1"><span class="u tg">Prochaine course</span><div class="big">${n>0?"J-"+n:"En cours"}</div><div class="lieu">${nx.l}</div><p>${nx.n} · ${dl(nx)}</p><p>${nx.o}</p></div><div class="t2"><div class="u" style="color:#9FB2E8">À venir</div><div class="big2">${r.length}</div><div>compétition${r.length>1?"s":""}</div><div class="bar2">${ks.map(k=>`<i style="flex:${cnt(k)};background:${col(k)}"></i>`).join("")}</div><div class="leg">${ks.map(k=>TL[k]+" "+cnt(k)).join(" · ")}</div></div></div>`};
+  return`<div class="dash"><div class="t1"><span class="u tg">Prochaine course</span><div class="big">${n>0?"J-"+n:"En cours"}</div><div class="lieu">${esc(nx.l)}</div><p>${esc(nx.n)} · ${dl(nx)}</p><p>${esc(nx.o)}</p></div><div class="t2"><div class="u" style="color:#9FB2E8">À venir</div><div class="big2">${r.length}</div><div>compétition${r.length>1?"s":""}</div><div class="bar2">${ks.map(k=>`<i style="flex:${cnt(k)};background:${col(k)}"></i>`).join("")}</div><div class="leg">${ks.map(k=>TL[k]+" "+cnt(k)).join(" · ")}</div></div></div>`};
 const monthView=(m,M)=>{
   let h='<div class="card"><div class="cal">'+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(w=>`<div class="wd">${w}</div>`).join("");
   cells(m).forEach(d=>{
     if(!d){h+='<div class="day out"></div>';return}
     const ev=M[d]||[],wk=new Date(d+"T12:00").getDay();
     h+=`<button class="day${ev.length?" has":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
-    +ev.slice(0,4).map(x=>`<span class="pill" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?x.l:"&nbsp;"}</span>`).join("")
+    +ev.slice(0,4).map(x=>`<span class="pill" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?esc(x.l):"&nbsp;"}</span>`).join("")
     +(ev.length>4?`<span class="more">+${ev.length-4}</span>`:"")+"</button>";
   });
   h+='</div></div><div id="detail">';
@@ -363,6 +368,54 @@ $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
 $("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
+let CL={};
+const pastille=x=>{const c=CL[x.id];return c&&c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':""};
+async function loadData(){
+  if(!sb)return;
+  const{data,error}=await sb.from("competitions").select("*").order("start_date");
+  if(error||!data||!data.length)return;
+  E=data.map(c=>({id:c.id,s:c.start_date,e:c.end_date,n:c.name,l:c.place,o:c.organizer||"",k:c.level,h:norm(c.name+" "+c.place+" "+(c.organizer||""))}));
+  E.sort((a,b)=>a.s.localeCompare(b.s)||a.e.localeCompare(b.e));
+  CL={};
+  if(me){const{data:cl}=await sb.from("competition_club").select("*");(cl||[]).forEach(r=>CL[r.competition_id]=r)}
+  render();
+}
+const REG={open:"ouvertes",closed:"fermées",not_planned:"participation non prévue"};
+const adminForm=(x,c)=>`<h3>Espace administrateur</h3><form id="fa" data-id="${x.id}">
+<label class="f"><input type="checkbox" name="cc"${c.club_considering?" checked":""}> CK Lagny envisage d'y participer</label>
+<label class="f" for="fa-r">Inscriptions</label><select id="fa-r" name="reg"><option value="closed">Fermées</option><option value="open">Ouvertes</option><option value="not_planned">Participation non prévue</option></select>
+<label class="f" for="fa-i">Informations pratiques</label><textarea id="fa-i" name="info" rows="4">${esc(c.practical_info||"")}</textarea>
+<label class="f" for="fa-l">Liens et documents (une ligne par lien : Titre | https://…)</label><textarea id="fa-l" name="links" rows="3">${esc((c.links||[]).map(l=>(l.label||"")+" | "+l.url).join("\n"))}</textarea>
+<label class="f" for="fa-s">Liste de départ</label><textarea id="fa-s" name="sl" rows="4">${esc(c.start_list||"")}</textarea>
+<div class="er" id="fa-e" role="alert"></div><button class="x" type="submit">Enregistrer</button></form>`;
+function openFiche(id){
+  const x=E.find(z=>z.id===id);if(!x)return;
+  const c=CL[id],adm=me&&me.role=="admin";
+  let h=`<h2>${esc(x.n)}</h2><p><span class="tag" data-l="${x.k}" style="--col:${L[x.k][1]}">${TL[x.k]}</span><b>${dl(x)}</b> · ${esc(x.l)}</p><p>${esc(x.o)}</p>`;
+  if(!me)h+='<p>Connecte-toi en tant que membre pour voir les informations du club.</p>';
+  else if(c){
+    h+=`<h3>Participation du club</h3><p>${c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span> ':""}Inscriptions : <b>${REG[c.registration]}</b></p>`;
+    if(c.practical_info)h+=`<h3>Informations pratiques</h3><p style="white-space:pre-line">${esc(c.practical_info)}</p>`;
+    const lk=(c.links||[]).filter(l=>/^https?:\/\//.test(l.url));
+    if(lk.length)h+="<h3>Liens et documents</h3><ul>"+lk.map(l=>`<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label||l.url)}</a></li>`).join("")+"</ul>";
+    if(c.start_list)h+=`<h3>Liste de départ</h3><p style="white-space:pre-line">${esc(c.start_list)}</p>`;
+  }
+  if(adm&&c)h+=adminForm(x,c);
+  $("fiche-c").innerHTML=h+'<button class="x" type="button" data-close>Fermer</button>';
+  if(adm&&c)$("fa-r").value=c.registration;
+  $("fiche").showModal();
+}
+const openCard=e=>{const a=e.target.closest("article[data-id]");if(a&&a.dataset.id)openFiche(+a.dataset.id)};
+$("list").addEventListener("click",openCard);
+$("list").addEventListener("keydown",e=>{if(e.key=="Enter")openCard(e)});
+$("fiche-c").onsubmit=async e=>{e.preventDefault();
+  const f=e.target,id=+f.dataset.id,fd=new FormData(f);
+  const links=(fd.get("links")||"").split("\n").map(t=>t.trim()).filter(Boolean).map(t=>{const[i,j]=t.split("|");return j?{label:i.trim(),url:j.trim()}:{label:"",url:i.trim()}});
+  const row={club_considering:fd.get("cc")=="on",registration:fd.get("reg"),practical_info:fd.get("info"),links,start_list:fd.get("sl")};
+  const{error}=await sb.from("competition_club").update(row).eq("competition_id",id);
+  if(error){$("fa-e").textContent="Erreur : "+error.message;return}
+  CL[id]={...CL[id],...row};$("fiche").close();render();
+};
 const SB_URL="https://ahowyusieltusuvfnktw.supabase.co",SB_KEY="sb_publishable_TUHfR5n6hWtiHROls73dgg_4s7VGRs3",ID_DOM="ck-lagny.example";
 const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY):null;
 let me=null;
@@ -383,6 +436,7 @@ async function loadMe(s){
     if(data&&data.active)me=data;else{await sb.auth.signOut();alert("Ce compte est désactivé ou introuvable.")}
   }
   drawAcct();
+  loadData();
 }
 async function api(action,p){
   const{data:{session}}=await sb.auth.getSession();
