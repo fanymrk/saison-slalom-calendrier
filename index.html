@@ -95,11 +95,20 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .hp ul{padding-left:20px;margin:6px 0}
 .hp .tag{margin:0 4px 0 0}
 .hp .x{display:block;margin:22px 0 0;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
+.hp input[type=text],.hp input[type=password]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:500 16px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink)}
+.hp label.f{font-size:14px;font-weight:600}
+.er{color:#C8161D;font-size:14px;min-height:20px}
+#adm-d{max-width:760px}
+.mb{background:var(--bg);border-radius:16px;padding:12px 16px;margin:8px 0}
+.mc{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0;font-size:14px}.mc label{display:flex;gap:4px;align-items:center}.sep{width:1px;background:var(--line)}
+.ma{display:flex;gap:6px;flex-wrap:wrap}
+.guest{font:600 13px "DM Sans",sans-serif;color:var(--mute)}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
 @media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div class="top"><div class="wrap">
@@ -108,6 +117,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <div class="ttl"><h1>Calendrier Slalom</h1><small>Source FFCK, édité le 22/10/2026</small></div>
 <input type="search" id="q" placeholder="Rechercher un lieu, un club…" aria-label="Recherche">
 <div class="seg" id="views" role="group" aria-label="Affichage"><button data-v="l">Liste</button><button data-v="m">Mois</button><button data-v="y">Année</button></div>
+<div class="row" id="acct"></div>
 </div>
 <div class="row" id="chips" role="group" aria-label="Niveau de compétition" style="margin-top:18px"></div>
 <div class="row tools">
@@ -145,9 +155,34 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 </ul>
 <button class="x" data-close>Compris</button>
 </div></dialog>
+<dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
+<h2 id="lg-t">Connexion membre</h2>
+<p>Réservé aux adhérents de CK Lagny. Sans compte, tu consultes le calendrier public en invité.</p>
+<label class="f" for="lf-f">Prénom</label><input id="lf-f" type="text" autocomplete="given-name" required>
+<label class="f" for="lf-l">Nom</label><input id="lf-l" type="text" autocomplete="family-name" required>
+<label class="f" for="lf-c">Code personnel</label><input id="lf-c" type="password" autocomplete="current-password" required>
+<div class="er" id="lf-e" role="alert"></div>
+<button class="x" type="submit">Se connecter</button>
+<button class="link" type="button" data-close style="margin-top:8px">Continuer en invité</button>
+</form></dialog>
+<dialog id="adm-d" aria-labelledby="ad-t"><div class="hp">
+<h2 id="ad-t">Gestion des membres</h2>
+<p>Coche les catégories (C1, K1) puis les niveaux autorisés (N1, N2, N3, R, C, O) de chaque membre : c'est enregistré tout de suite.</p>
+<div class="er" id="adm-e" role="alert"></div>
+<div id="adm-l"></div>
+<h3>Ajouter un membre</h3>
+<form id="adm-f">
+<label class="f" for="af">Prénom</label><input id="af" type="text" required>
+<label class="f" for="al">Nom</label><input id="al" type="text" required>
+<label class="f" for="ac">Code personnel (6 caractères minimum)</label><input id="ac" type="text" minlength="6" required>
+<button class="x" type="submit">Créer le compte</button>
+</form>
+<button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
+</div></dialog>
 <script>
 const D=[
 ["2026-10-24","2026-10-25","Sélectif Régional Slalom (Double)","Bizanos","Pau Canoë-Kayak Club Universitaire"],
+["2026-10-24","2026-10-25","Compétition Régionale de Slalom","Bizanos","Pau Canoë-Kayak Club Universitaire"],
 ["2026-10-31","2026-11-01","Sélectif Régional de slalom","Foix","Foix Canoë Kayak Eau Vive"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Cessenon-sur-Orb","Canoë Kayak Club Cessenon"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Metz","Comité Régional Grand Est CK"],
@@ -328,7 +363,70 @@ $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
 $("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
-const hp=$("help");$("help-btn").onclick=()=>hp.showModal();hp.onclick=e=>{if(e.target===hp||e.target.closest("[data-close]"))hp.close()};
+const SB_URL="https://ahowyusieltusuvfnktw.supabase.co",SB_KEY="sb_publishable_TUHfR5n6hWtiHROls73dgg_4s7VGRs3",ID_DOM="ck-lagny.example";
+const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY):null;
+let me=null;
+const esc=t=>String(t).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";");
+const slug=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const mail=(f,l)=>slug(f)+"."+slug(l)+"@"+ID_DOM;
+const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
+function drawAcct(){
+  if(!sb){$("acct").innerHTML="";return}
+  $("acct").innerHTML=me
+    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button>':""}<button class="link" id="out">Déconnexion</button>`
+    :'<span class="guest">Invité</span><button class="chip" id="in">Se connecter</button>';
+}
+async function loadMe(s){
+  me=null;
+  if(s){
+    const{data}=await sb.from("profiles").select("*").eq("id",s.user.id).maybeSingle();
+    if(data&&data.active)me=data;else{await sb.auth.signOut();alert("Ce compte est désactivé ou introuvable.")}
+  }
+  drawAcct();
+}
+async function api(action,p){
+  const{data:{session}}=await sb.auth.getSession();
+  const r=await fetch("/api/admin-users",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({action,...p})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||"Erreur "+r.status);
+  return j;
+}
+const ck=(f,v,p)=>`<label><input type="checkbox" data-f="${f}" value="${v}"${(p[f]||[]).includes(v)?" checked":""}>${v}</label>`;
+async function admList(){
+  const{data,error}=await sb.from("profiles").select("*").order("last_name");
+  if(error){$("adm-l").textContent="Erreur : "+error.message;return}
+  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}</div>
+<div class="mc">${CATS.map(c=>ck("categories",c,p)).join("")}<span class="sep"></span>${LV.map(c=>ck("levels",c,p)).join("")}</div>
+<div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
+}
+if(sb){
+  sb.auth.onAuthStateChange((ev,s)=>{setTimeout(()=>loadMe(s),0)});
+  $("acct").onclick=e=>{const id=e.target.id;
+    if(id=="in")$("login").showModal();
+    else if(id=="out")sb.auth.signOut();
+    else if(id=="adm"){$("adm-d").showModal();admList()}};
+  $("lf").onsubmit=async e=>{e.preventDefault();$("lf-e").textContent="";
+    const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
+    if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
+    $("lf-c").value="";$("login").close()};
+  $("adm-l").onchange=async e=>{const c=e.target.closest("input[data-f]");if(!c)return;
+    const row=c.closest(".mb"),f=c.dataset.f,vals=[...row.querySelectorAll(`input[data-f="${f}"]:checked`)].map(i=>i.value);
+    const{error}=await sb.from("profiles").update({[f]:vals}).eq("id",row.dataset.id);
+    $("adm-e").textContent=error?"Erreur : "+error.message:""};
+  $("adm-l").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;
+    const row=b.closest(".mb"),id=row.dataset.id,a=b.dataset.a,nm=row.querySelector("b").textContent;
+    try{
+      if(a=="code"){const c=prompt("Nouveau code personnel pour "+nm+" (6 caractères minimum) :");if(!c)return;await api("reset_code",{id,code:c})}
+      else if(a=="act")await api("set_active",{id,active:b.textContent.trim()=="Réactiver"});
+      else if(a=="del"){if(!confirm("Supprimer définitivement le compte de "+nm+" et ses réponses ?"))return;await api("delete",{id})}
+      $("adm-e").textContent="";await admList();
+    }catch(err){$("adm-e").textContent=err.message}};
+  $("adm-f").onsubmit=async e=>{e.preventDefault();
+    try{await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value});
+      e.target.reset();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
+}else drawAcct();
+$("help-btn").onclick=()=>$("help").showModal();
+document.querySelectorAll("dialog").forEach(d=>d.onclick=e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()});
 hashLoad();render();
 </script>
 </body>
