@@ -107,6 +107,9 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .k[data-id]:not([data-id=""]){cursor:pointer}.k:focus-visible{outline:3px solid #FFB000}
 .hp textarea,.hp select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:500 15px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink);background:#fff}
 #fiche{max-width:640px}
+.cl.my{margin-left:6px}.cl.yes{background:#1262D6;color:#fff}.cl.no{background:#E4E8F2;color:#4A5B8A}
+.nt{padding:10px 14px;border-radius:12px;background:var(--bg);cursor:pointer;margin:6px 0}.nt.un{background:#E3EDFF;font-weight:600}
+.hp .row{margin:6px 0 12px}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
 @media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
@@ -160,6 +163,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <button class="x" data-close>Compris</button>
 </div></dialog>
 <dialog id="fiche" aria-label="Fiche de la compétition"><div class="hp" id="fiche-c"></div></dialog>
+<dialog id="notif" aria-labelledby="nt-t"><div class="hp"><h2 id="nt-t">Notifications</h2><div id="notif-l"></div><button class="link" type="button" id="notif-all">Tout marquer comme lu</button><button class="x" type="button" data-close>Fermer</button></div></dialog>
 <dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
 <h2 id="lg-t">Connexion membre</h2>
 <p>Réservé aux adhérents de CK Lagny. Sans compte, tu consultes le calendrier public en invité.</p>
@@ -368,18 +372,101 @@ $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
 $("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
-let CL={};
-const pastille=x=>{const c=CL[x.id];return c&&c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':""};
+let CL={},RS={},PF={},RQ=[],CQ=[],EX=[],NT=[];
+const ST={yes:"Je viens",maybe:"Je ne sais pas encore",no:"Je ne viens pas"};
+const myR=id=>(RS[id]||[]).find(r=>me&&r.member_id==me.id);
+const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||((me.levels||[]).includes(x.k)&&(me.categories||[]).some(t=>(x.cat||[]).includes(t))));
+const pastille=x=>{const c=CL[x.id];if(!c)return"";const r=myR(x.id);
+  return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${ST[r.status]}${r.locked?" ✓":""}</span>`:"")};
 async function loadData(){
   if(!sb)return;
   const{data,error}=await sb.from("competitions").select("*").order("start_date");
   if(error||!data||!data.length)return;
-  E=data.map(c=>({id:c.id,s:c.start_date,e:c.end_date,n:c.name,l:c.place,o:c.organizer||"",k:c.level,h:norm(c.name+" "+c.place+" "+(c.organizer||""))}));
+  E=data.map(c=>({id:c.id,s:c.start_date,e:c.end_date,n:c.name,l:c.place,o:c.organizer||"",k:c.level,cat:c.categories||[],h:norm(c.name+" "+c.place+" "+(c.organizer||""))}));
   E.sort((a,b)=>a.s.localeCompare(b.s)||a.e.localeCompare(b.e));
-  CL={};
-  if(me){const{data:cl}=await sb.from("competition_club").select("*");(cl||[]).forEach(r=>CL[r.competition_id]=r)}
-  render();
+  CL={};RS={};PF={};RQ=[];CQ=[];EX=[];NT=[];
+  if(me){
+    const q=t=>sb.from(t).select("*");
+    const[a,b,c,d,f,g,h]=await Promise.all([q("competition_club"),q("responses"),q("profiles"),q("registration_requests"),q("change_requests"),q("exceptions"),
+      me.role=="admin"?sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(100):Promise.resolve({data:[]})]);
+    (a.data||[]).forEach(r=>CL[r.competition_id]=r);
+    (b.data||[]).forEach(r=>(RS[r.competition_id]=RS[r.competition_id]||[]).push(r));
+    (c.data||[]).forEach(r=>PF[r.id]=r);
+    RQ=d.data||[];CQ=f.data||[];EX=g.data||[];NT=h.data||[];
+  }
+  drawAcct();render();
 }
+const nm=id=>PF[id]?esc(PF[id].first_name+" "+PF[id].last_name):"Un membre";
+function partHtml(x,c){
+  const r=myR(x.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==me.id);
+  const cq=CQ.filter(q=>q.competition_id==x.id&&q.member_id==me.id).sort((a,b)=>b.id-a.id)[0];
+  let h="<h3>Ma participation</h3>";
+  if(c.registration=="open"){
+    if(!eligible(x,c))return h+"<p>Tu n'as pas le niveau ou la catégorie requis pour cette compétition. Tu peux consulter les informations et les réponses des autres membres.</p>";
+    if(r&&r.locked){
+      h+=`<p>Ta réponse : <b>${ST[r.status]}</b> (confirmée).</p>`;
+      if(cq&&cq.status=="pending")h+="<p>Ta demande de modification est en attente de l'administrateur.</p>";
+      else{if(cq&&cq.status=="refused")h+="<p>Ta dernière demande de modification a été refusée.</p>";
+        h+=`<button class="chip" data-act="chg" data-id="${x.id}">Demander une modification</button>`}
+      return h;
+    }
+    return h+`<p>${r?"Ta réponse : <b>"+ST[r.status]+"</b>":"Tu n'as pas encore répondu."}</p><div class="row">`
+      +["yes","maybe","no"].map(s=>`<button class="chip" data-act="ans" data-s="${s}" data-id="${x.id}" style="--col:var(--accent)"${r&&r.status==s?' aria-pressed="true"':""}>${ST[s]}</button>`).join("")+"</div>";
+  }
+  if(rq&&rq.status=="pending")return h+"<p>Ta demande d'ouverture des inscriptions a été envoyée à l'administrateur.</p>";
+  if(rq)return h+`<p>Demande d'ouverture des inscriptions : <b>${rq.status=="accepted"?"acceptée":"refusée"}</b>.${rq.decision_note?" "+esc(rq.decision_note):""}</p>`;
+  return h+`<p>Les inscriptions ne sont pas ouvertes.</p><button class="chip" data-act="req" data-id="${x.id}">Demander l'ouverture des inscriptions</button>`;
+}
+function listHtml(x){
+  const l=RS[x.id]||[],adm=me.role=="admin",g=s=>l.filter(r=>r.status==s);
+  return"<h3>Réponses des membres</h3>"+["yes","maybe","no"].map(s=>`<p><b>${ST[s]}</b> (${g(s).length})${g(s).length?" : ":""}`
+    +g(s).map(r=>nm(r.member_id)+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")).join(", ")+"</p>").join("");
+}
+function admExtra(x){
+  let h="";const rq=RQ.filter(q=>q.competition_id==x.id&&q.status=="pending"),cq=CQ.filter(q=>q.competition_id==x.id&&q.status=="pending");
+  if(rq.length||cq.length){h+="<h3>Demandes à traiter</h3>";
+    rq.forEach(q=>h+=`<p>${nm(q.member_id)} demande l'ouverture des inscriptions. <button class="link" data-act="rq-ok" data-id="${x.id}" data-q="${q.id}">Accepter</button><button class="link" data-act="rq-no" data-id="${x.id}" data-q="${q.id}">Refuser</button></p>`);
+    cq.forEach(q=>h+=`<p>${nm(q.member_id)} demande à modifier sa réponse${q.message?" : « "+esc(q.message)+" »":""}. <button class="link" data-act="cq-ok" data-id="${x.id}" data-q="${q.id}">Autoriser</button><button class="link" data-act="cq-no" data-id="${x.id}" data-q="${q.id}">Refuser</button></p>`)}
+  const ex=EX.filter(e=>e.competition_id==x.id);
+  return h+"<h3>Autorisations exceptionnelles</h3>"+(ex.length?"<ul>"+ex.map(e=>`<li>${nm(e.member_id)} <button class="link" data-act="ex-del" data-id="${x.id}" data-m="${e.member_id}">Retirer</button></li>`).join("")+"</ul>":"<p>Aucune.</p>")
+    +`<div class="row"><select id="ex-m" aria-label="Membre">${Object.values(PF).filter(p=>p.active).map(p=>`<option value="${p.id}">${esc(p.first_name+" "+p.last_name)}</option>`).join("")}</select><button class="chip" data-act="ex-add" data-id="${x.id}">Autoriser ce membre</button></div>`;
+}
+$("fiche-c").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const id=+b.dataset.id,a=b.dataset.act,T=(t,w)=>sb.from(t).update(w);
+  try{
+    let r;
+    if(a=="ans"){const s=b.dataset.s;
+      if(s!="maybe"&&!confirm("Confirmer « "+ST[s]+" » ? Cette réponse sera définitive : pour la changer, tu devras demander une modification à l'administrateur."))return;
+      r=await sb.from("responses").upsert({competition_id:id,member_id:me.id,status:s},{onConflict:"competition_id,member_id"})}
+    else if(a=="req")r=await sb.from("registration_requests").insert({competition_id:id,member_id:me.id});
+    else if(a=="chg"){const m=prompt("Pourquoi souhaites-tu modifier ta réponse ? (facultatif)");if(m===null)return;r=await sb.from("change_requests").insert({competition_id:id,member_id:me.id,message:m||null})}
+    else if(me.role=="admin"){
+      const q=+b.dataset.q,m=b.dataset.m,now=new Date().toISOString();
+      if(a=="unl")r=await T("responses",{locked:false}).eq("competition_id",id).eq("member_id",m);
+      else if(a=="rq-ok"){r=await T("registration_requests",{status:"accepted",decided_at:now}).eq("id",q);
+        if(!r.error&&confirm("Demande acceptée. Ouvrir aussi les inscriptions pour cette compétition ?"))r=await T("competition_club",{registration:"open"}).eq("competition_id",id)}
+      else if(a=="rq-no"){const n=prompt("Motif du refus (facultatif) :");if(n===null)return;r=await T("registration_requests",{status:"refused",decision_note:n||null,decided_at:now}).eq("id",q)}
+      else if(a=="cq-ok"){const z=CQ.find(k=>k.id==q);r=await T("change_requests",{status:"accepted"}).eq("id",q);
+        if(!r.error&&z)r=await T("responses",{locked:false}).eq("competition_id",id).eq("member_id",z.member_id)}
+      else if(a=="cq-no")r=await T("change_requests",{status:"refused"}).eq("id",q);
+      else if(a=="ex-add")r=await sb.from("exceptions").insert({competition_id:id,member_id:$("ex-m").value,granted_by:me.id});
+      else if(a=="ex-del")r=await sb.from("exceptions").delete().eq("competition_id",id).eq("member_id",m);
+    }
+    if(r&&r.error)throw r.error;
+  }catch(err){alert("Erreur : "+err.message)}
+  await loadData();openFiche(id);
+});
+const NK={response:"a répondu",registration_request:"demande l'ouverture des inscriptions",change_request:"demande à modifier sa réponse"};
+function ntList(){
+  $("notif-l").innerHTML=NT.map(n=>{const x=E.find(z=>z.id===n.competition_id);
+    return`<p class="nt${n.read?"":" un"}" data-n="${n.id}" data-c="${n.competition_id}" tabindex="0"><b>${nm(n.member_id)}</b> ${NK[n.kind]||""} · ${x?esc(x.l):""} <small>${new Date(n.created_at).toLocaleDateString("fr-FR")}</small></p>`}).join("")||"<p>Aucune notification.</p>";
+}
+$("notif-l").addEventListener("click",async e=>{const p=e.target.closest("[data-n]");if(!p)return;
+  await sb.from("notifications").update({read:true}).eq("id",+p.dataset.n);
+  $("notif").close();await loadData();openFiche(+p.dataset.c)});
+$("notif-all").onclick=async()=>{await sb.from("notifications").update({read:true}).eq("read",false);await loadData();ntList()};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadData()});
 const REG={open:"ouvertes",closed:"fermées",not_planned:"participation non prévue"};
 const adminForm=(x,c)=>`<h3>Espace administrateur</h3><form id="fa" data-id="${x.id}">
 <label class="f"><input type="checkbox" name="cc"${c.club_considering?" checked":""}> CK Lagny envisage d'y participer</label>
@@ -399,11 +486,12 @@ function openFiche(id){
     const lk=(c.links||[]).filter(l=>/^https?:\/\//.test(l.url));
     if(lk.length)h+="<h3>Liens et documents</h3><ul>"+lk.map(l=>`<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label||l.url)}</a></li>`).join("")+"</ul>";
     if(c.start_list)h+=`<h3>Liste de départ</h3><p style="white-space:pre-line">${esc(c.start_list)}</p>`;
+    h+=partHtml(x,c)+listHtml(x);
   }
-  if(adm&&c)h+=adminForm(x,c);
+  if(adm&&c)h+=admExtra(x)+adminForm(x,c);
   $("fiche-c").innerHTML=h+'<button class="x" type="button" data-close>Fermer</button>';
   if(adm&&c)$("fa-r").value=c.registration;
-  $("fiche").showModal();
+  if(!$("fiche").open)$("fiche").showModal();
 }
 const openCard=e=>{const a=e.target.closest("article[data-id]");if(a&&a.dataset.id)openFiche(+a.dataset.id)};
 $("list").addEventListener("click",openCard);
@@ -426,7 +514,7 @@ const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
 function drawAcct(){
   if(!sb){$("acct").innerHTML="";return}
   $("acct").innerHTML=me
-    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button>':""}<button class="link" id="out">Déconnexion</button>`
+    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
     :'<span class="guest">Invité</span><button class="chip" id="in">Se connecter</button>';
 }
 async function loadMe(s){
@@ -458,7 +546,8 @@ if(sb){
   $("acct").onclick=e=>{const id=e.target.id;
     if(id=="in")$("login").showModal();
     else if(id=="out")sb.auth.signOut();
-    else if(id=="adm"){$("adm-d").showModal();admList()}};
+    else if(id=="adm"){$("adm-d").showModal();admList()}
+    else if(id=="nt"){ntList();$("notif").showModal()}};
   $("lf").onsubmit=async e=>{e.preventDefault();$("lf-e").textContent="";
     const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
     if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
