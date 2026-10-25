@@ -1,5 +1,5 @@
 // Fonction serveur Vercel : gestion des comptes membres (réservée à l'administrateur).
-// Variables d'environnement à créer dans Vercel : SUPABASE_URL, SUPABASE_SECRET_KEY
+// Variable d'environnement à créer dans Vercel : SUPABASE_SECRET_KEY (SUPABASE_URL est facultative)
 const { createClient } = require("@supabase/supabase-js");
 
 const ID_DOM = "ck-lagny.example"; // doit être identique à ID_DOM dans index.html
@@ -9,7 +9,10 @@ const slug = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").t
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Méthode non autorisée" });
   try {
-    const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {
+    const url = (process.env.SUPABASE_URL || "https://ahowyusieltusuvfnktw.supabase.co").trim();
+    const key = (process.env.SUPABASE_SECRET_KEY || "").trim();
+    if (!key) throw new Error("La variable SUPABASE_SECRET_KEY est introuvable dans Vercel (nom exact, puis redéployer).");
+    const admin = createClient(url, key, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
