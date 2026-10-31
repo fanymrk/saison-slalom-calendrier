@@ -144,10 +144,10 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 
 <dialog id="help" aria-labelledby="hp-t"><div class="hp">
 <h2 id="hp-t">Comment ça marche ?</h2>
-<p>Ce calendrier regroupe les compétitions de slalom à venir (octobre 2026 à fin 2027), d'après le calendrier officiel de la FFCK.</p>
+<p>Ce calendrier regroupe les compétitions de slalom à venir (octobre 2026 à fin 2027), d'après le calendrier officiel de la FFCK. Les adhérents de CK Lagny peuvent en plus se connecter pour répondre aux compétitions.</p>
 <h3>Choisir l'affichage</h3>
 <ul>
-<li><b>Liste</b> : toutes les courses classées par mois. La carte bleue indique la prochaine course et les jours restants.</li>
+<li><b>Liste</b> : toutes les courses classées par mois. Les compétitions du même week-end sont du même côté de la frise. La carte bleue indique la prochaine course et les jours restants.</li>
 <li><b>Mois</b> : un calendrier classique. Les jours avec une course sont colorés : clique sur un jour pour voir le détail.</li>
 <li><b>Année</b> : les 12 mois d'un coup pour repérer les périodes chargées. Clique sur un jour ou un mois pour l'ouvrir.</li>
 </ul>
@@ -159,6 +159,24 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 </ul>
 <h3>Les couleurs</h3>
 <p><span class="tag" data-l="N1" style="--col:var(--n1)">N1</span><span class="tag" data-l="N2" style="--col:var(--n2)">N2</span><span class="tag" data-l="N3" style="--col:var(--n3)">N3</span><span class="tag" data-l="R" style="--col:var(--r)">Régional</span><span class="tag" data-l="C" style="--col:var(--c)">Championnat</span><span class="tag" data-l="O" style="--col:var(--o)">Open</span></p>
+<h3>Espace membre CK Lagny</h3>
+<ul>
+<li><b>Se connecter</b> : bouton en haut de la page, avec ton prénom, ton nom et le code personnel donné par l'administrateur. Sans connexion, tu es « Invité » et tu vois seulement le calendrier public.</li>
+<li><b>Ouvrir une compétition</b> : clique dessus pour voir sa fiche (infos pratiques, liens, liste de départ) et les réponses des autres membres.</li>
+<li><b>Répondre</b> quand les inscriptions sont ouvertes : « Je viens », « Je ne sais pas encore » ou « Je ne viens pas ». « Je ne sais pas encore » se change librement. « Je viens » et « Je ne viens pas » demandent une confirmation, puis la réponse est verrouillée : pour la changer, utilise « Demander une modification ».</li>
+<li><b>Inscriptions fermées</b> : le bouton « Demander l'ouverture des inscriptions » prévient l'administrateur. Tu vois ensuite sa décision.</li>
+<li><b>Niveau ou catégorie non adaptés</b> : tu peux consulter la fiche, mais pas répondre, sauf autorisation de l'administrateur.</li>
+<li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». La case « Mes réponses seulement » ne garde que tes compétitions.</li>
+</ul>
+<div id="help-adm" hidden>
+<h3>Pour l'administrateur</h3>
+<ul>
+<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum), coche ses catégories (C1, K1) et ses niveaux, change son code, désactive ou supprime son compte.</li>
+<li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
+<li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
+<li><b>Notifications</b> : elles signalent les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
+</ul>
+</div>
 <h3>Bon à savoir</h3>
 <ul>
 <li>La « prochaine course » se met à jour toute seule avec la date du jour.</li>
@@ -606,7 +624,7 @@ if(sb){
     try{await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value});
       e.target.reset();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
 }else drawAcct();
-$("help-btn").onclick=()=>$("help").showModal();
+$("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help").showModal()};
 document.querySelectorAll("dialog").forEach(d=>d.onclick=e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()});
 hashLoad();render();
 </script>
