@@ -95,7 +95,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .hp ul{padding-left:20px;margin:6px 0}
 .hp .tag{margin:0 4px 0 0}
 .hp .x{display:block;margin:22px 0 0;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
-.hp input[type=text],.hp input[type=password]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:500 16px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink)}
+.hp input[type=text],.hp input[type=password],.hp input[type=date]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:500 16px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink)}
 .hp label.f{font-size:14px;font-weight:600}
 .er{color:#C8161D;font-size:14px;min-height:20px}
 #adm-d{max-width:760px}
@@ -110,6 +110,10 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .cl.my{margin-left:6px}.cl.yes{background:#1262D6;color:#fff}.cl.no{background:#E4E8F2;color:#4A5B8A}
 .nt{padding:10px 14px;border-radius:12px;background:var(--bg);cursor:pointer;margin:6px 0}.nt.un{background:#E3EDFF;font-weight:600}
 .hp .row{margin:6px 0 12px}
+.k[data-r=yes]{box-shadow:inset 6px 0 0 var(--accent)}.k[data-r=maybe]{box-shadow:inset 6px 0 0 #9FB2E8}
+.k[data-r=no]{opacity:.55}.k[data-r=no] h3{text-decoration:line-through}
+.pill[data-r=yes]{outline:2px solid var(--ink)}.pill[data-r=maybe]{outline:2px dashed var(--ink)}.pill[data-r=no]{opacity:.4;text-decoration:line-through}
+.day.yes{box-shadow:inset 0 0 0 3px var(--accent)}.dc.yes{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
 @media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
@@ -131,6 +135,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <select id="m" aria-label="Mois"></select>
 <div class="row" id="nav"><button class="chip" id="prev" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" aria-label="Suivant">›</button><button class="link" id="tod">Aujourd'hui</button></div>
 <label class="sw"><input type="checkbox" id="fut"> Masquer les passées</label>
+<label class="sw" id="mine-w" style="display:none"><input type="checkbox" id="mine"> Mes réponses seulement</label>
 <button class="link" id="rst">Réinitialiser</button>
 <button class="chip" id="help-btn" aria-haspopup="dialog">? Comment ça marche</button>
 <span id="count" aria-live="polite"></span>
@@ -191,6 +196,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <script>
 const D=[
 ["2026-10-24","2026-10-25","Sélectif Régional Slalom (Double)","Bizanos","Pau Canoë-Kayak Club Universitaire"],
+["2026-10-24","2026-10-25","Compétition Régionale de Slalom","Bizanos","Pau Canoë-Kayak Club Universitaire"],
 ["2026-10-31","2026-11-01","Sélectif Régional de slalom","Foix","Foix Canoë Kayak Eau Vive"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Cessenon-sur-Orb","Canoë Kayak Club Cessenon"],
 ["2026-11-07","2026-11-08","Sélectif Régional Slalom (Double)","Metz","Comité Régional Grand Est CK"],
@@ -252,9 +258,9 @@ E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
 const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
 const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
 const today=new Date().toISOString().slice(0,10);
-const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:""};
+const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:"",mine:false};
 const pad=n=>String(n).padStart(2,"0");
-const minM=E[0].s.slice(0,7),maxM=E[E.length-1].e.slice(0,7);
+let minM=E[0].s.slice(0,7),maxM=E[E.length-1].e.slice(0,7);
 const clampM=m=>m<minM?minM:m>maxM?maxM:m;
 const shift=(m,k)=>{const[y,o]=m.split("-").map(Number),d=new Date(y,o-1+k,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
 const add=d=>{const t=new Date(d+"T12:00");t.setDate(t.getDate()+1);return t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate())};
@@ -262,9 +268,13 @@ const byDay=r=>{const M={};r.forEach(x=>{let d=x.s;while(d<=x.e){(M[d]=M[d]||[])
 const cells=m=>{const[y,o]=m.split("-").map(Number),n=new Date(y,o,0).getDate(),f=(new Date(y,o-1,1).getDay()+6)%7,a=Array(f).fill(null);for(let d=1;d<=n;d++)a.push(m+"-"+pad(d));return a};
 st.cm=clampM(today.slice(0,7));
 
+function buildFilters(){
 $("chips").innerHTML=Object.entries(L).map(([k,[t,c]])=>`<button class="chip" data-l="${k}" style="--col:${c}" aria-pressed="false">${t}<small>${E.filter(x=>x.k==k).length}</small></button>`).join("");
 const ms=[...new Set(E.map(x=>x.s.slice(0,7)))];
 $("m").innerHTML='<option value="">Tous les mois</option>'+ms.map(m=>`<option value="${m}">${mois(m+"-01")}</option>`).join("");
+  $("m").value=st.m;
+}
+buildFilters();
 
 function hashSave(){
   const p=new URLSearchParams();
@@ -285,20 +295,21 @@ const dl=x=>{const a=new Date(x.s+"T12:00"),b=new Date(x.e+"T12:00"),mo=d=>d.toL
   if(x.s==x.e)return`${a.getDate()} ${mo(a)}`;
   return a.getMonth()==b.getMonth()?`${a.getDate()}–${b.getDate()} ${mo(a)}`:`${a.getDate()} ${mo(a)} → ${b.getDate()} ${mo(b)}`};
 const TL={N1:"N1",N2:"N2",N3:"N3",R:"Régional",C:"Championnat",O:"Open"};
-const card=(x,nx,side)=>`<article tabindex="0" data-id="${x.id||""}" class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${esc(x.l)}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${esc(x.n)}<br>${esc(x.o)}</p>${pastille(x)}</article>`;
+const card=(x,nx,side)=>`<article tabindex="0" data-id="${x.id||""}" data-r="${(myR(x.id)||{}).status||""}"${hov(x)} class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${esc(x.l)}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${esc(x.n)}<br>${esc(x.o)}</p>${pastille(x)}</article>`;
 const dash=r=>{
-  const nx=r.find(x=>x.e>=today);if(!nx)return"";
+  const mine=me?E.find(x=>x.e>=today&&(myR(x.id)||{}).status=="yes"):null;
+  const nx=mine||r.find(x=>x.e>=today);if(!nx)return"";
   const n=Math.round((new Date(nx.s+"T12:00")-new Date(today+"T12:00"))/864e5);
   const cnt=k=>r.filter(x=>x.k==k).length,ks=Object.keys(L).filter(k=>cnt(k));
   const col=k=>k=="C"?"#fff":k=="O"?"#9FB2E8":L[k][1];
-  return`<div class="dash"><div class="t1"><span class="u tg">Prochaine course</span><div class="big">${n>0?"J-"+n:"En cours"}</div><div class="lieu">${esc(nx.l)}</div><p>${esc(nx.n)} · ${dl(nx)}</p><p>${esc(nx.o)}</p></div><div class="t2"><div class="u" style="color:#9FB2E8">À venir</div><div class="big2">${r.length}</div><div>compétition${r.length>1?"s":""}</div><div class="bar2">${ks.map(k=>`<i style="flex:${cnt(k)};background:${col(k)}"></i>`).join("")}</div><div class="leg">${ks.map(k=>TL[k]+" "+cnt(k)).join(" · ")}</div></div></div>`};
+  return`<div class="dash"><div class="t1"><span class="u tg">${mine?"Ma prochaine compétition":"Prochaine course"}</span><div class="big">${n>0?"J-"+n:"En cours"}</div><div class="lieu">${esc(nx.l)}</div><p>${esc(nx.n)} · ${dl(nx)}</p><p>${esc(nx.o)}</p>${me&&!mine?"<p>Tu n'as pas encore de compétition confirmée.</p>":""}</div><div class="t2"><div class="u" style="color:#9FB2E8">À venir</div><div class="big2">${r.length}</div><div>compétition${r.length>1?"s":""}</div><div class="bar2">${ks.map(k=>`<i style="flex:${cnt(k)};background:${col(k)}"></i>`).join("")}</div><div class="leg">${ks.map(k=>TL[k]+" "+cnt(k)).join(" · ")}</div></div></div>`};
 const monthView=(m,M)=>{
   let h='<div class="card"><div class="cal">'+["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(w=>`<div class="wd">${w}</div>`).join("");
   cells(m).forEach(d=>{
     if(!d){h+='<div class="day out"></div>';return}
     const ev=M[d]||[],wk=new Date(d+"T12:00").getDay();
-    h+=`<button class="day${ev.length?" has":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
-    +ev.slice(0,4).map(x=>`<span class="pill" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?esc(x.l):"&nbsp;"}</span>`).join("")
+    h+=`<button class="day${ev.length?" has":""}${ev.some(x=>(myR(x.id)||{}).status=="yes")?" yes":""}${d==today?" today":""}${d==st.sel?" sel":""}" data-d="${d}" aria-label="${fm(d,{day:"numeric",month:"long"})} : ${ev.length} compétition(s)"><span class="dn">${+d.slice(8)}</span>`
+    +ev.slice(0,4).map(x=>`<span class="pill" data-r="${(myR(x.id)||{}).status||""}" data-l="${x.k}" style="--col:${L[x.k][1]}">${d==x.s||wk==1?esc(x.l):"&nbsp;"}</span>`).join("")
     +(ev.length>4?`<span class="more">+${ev.length-4}</span>`:"")+"</button>";
   });
   h+='</div></div><div id="detail">';
@@ -318,14 +329,16 @@ const yearView=(y,r,M)=>{
       const ev=M[d];
       if(!ev)return`<span${d==today?' class="tdy"':""}>${+d.slice(8)}</span>`;
       const k=PR.find(p=>ev.some(x=>x.k==p));
-      return`<button class="dc" data-d="${d}" data-l="${k}" style="--col:${L[k][1]}" title="${ev.length} compétition(s)">${+d.slice(8)}</button>`;
+      return`<button class="dc${ev.some(x=>(myR(x.id)||{}).status=="yes")?" yes":""}" data-d="${d}" data-l="${k}" style="--col:${L[k][1]}" title="${ev.length} compétition(s)">${+d.slice(8)}</button>`;
     }).join("")+"</div></div>";
   }
   return h+"</div>";
 };
 function render(){
+  if(!me)st.mine=false;
+  $("mine-w").style.display=me?"flex":"none";$("mine").checked=st.mine;
   const q=norm(st.q.trim()),cal=st.v!="l";
-  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
+  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!st.mine||myR(x.id))&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
   document.querySelectorAll("#chips .chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
   document.querySelectorAll("#views button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
   $("m").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
@@ -370,13 +383,16 @@ $("list").onclick=e=>{
 $("q").oninput=e=>{st.q=e.target.value;render()};
 $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
-$("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;render()};
+$("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;st.mine=false;render()};
+$("mine").onchange=e=>{st.mine=e.target.checked;render()};
 let CL={},RS={},PF={},RQ=[],CQ=[],EX=[],NT=[];
 const ST={yes:"Je viens",maybe:"Je ne sais pas encore",no:"Je ne viens pas"};
 const myR=id=>(RS[id]||[]).find(r=>me&&r.member_id==me.id);
 const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||((me.levels||[]).includes(x.k)&&(me.categories||[]).some(t=>(x.cat||[]).includes(t))));
 const pastille=x=>{const c=CL[x.id];if(!c)return"";const r=myR(x.id);
   return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${ST[r.status]}${r.locked?" ✓":""}</span>`:"")};
+const hov=x=>{if(!me||!CL[x.id])return"";const l=RS[x.id]||[];
+  return' title="'+esc(["yes","maybe","no"].map(s=>{const g=l.filter(r=>r.status==s).map(r=>PF[r.member_id]?PF[r.member_id].first_name+" "+PF[r.member_id].last_name:"Un membre");return ST[s]+" ("+g.length+")"+(g.length?" : "+g.join(", "):"")}).join("\n"))+'"'};
 async function loadData(){
   if(!sb)return;
   const{data,error}=await sb.from("competitions").select("*").order("start_date");
@@ -393,8 +409,21 @@ async function loadData(){
     (c.data||[]).forEach(r=>PF[r.id]=r);
     RQ=d.data||[];CQ=f.data||[];EX=g.data||[];NT=h.data||[];
   }
-  drawAcct();render();
+  minM=E.reduce((a,x)=>x.s<a?x.s:a,E[0].s).slice(0,7);maxM=E.reduce((a,x)=>x.e>a?x.e:a,E[0].e).slice(0,7);
+  buildFilters();drawAcct();render();
 }
+const LVN={N1:"N1 · Coupe de France N1",N2:"N2 · Coupe de France N2",N3:"N3 · Coupe de France N3",R:"Régional",C:"Championnats",O:"Open"};
+const compForm=x=>{const c=x||{n:"",s:"",e:"",l:"",o:"",k:"R",cat:["C1","K1"]};
+  return`<h3>${x?"Modifier la compétition":"Nouvelle compétition"}</h3><form id="fe" data-id="${x?x.id:""}">
+<label class="f" for="fe-n">Nom</label><input id="fe-n" name="n" type="text" value="${esc(c.n)}" required>
+<label class="f" for="fe-s">Début</label><input id="fe-s" name="s" type="date" value="${c.s}" required>
+<label class="f" for="fe-e">Fin</label><input id="fe-e" name="e" type="date" value="${c.e}" required>
+<label class="f" for="fe-l">Lieu</label><input id="fe-l" name="l" type="text" value="${esc(c.l)}" required>
+<label class="f" for="fe-o">Club organisateur</label><input id="fe-o" name="o" type="text" value="${esc(c.o)}">
+<label class="f" for="fe-k">Niveau</label><select id="fe-k" name="k">${Object.entries(LVN).map(([k,t])=>`<option value="${k}"${c.k==k?" selected":""}>${t}</option>`).join("")}</select>
+<p class="f">Catégories autorisées : ${CATS.map(t=>`<label><input type="checkbox" name="cat" value="${t}"${(c.cat||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}</p>
+<div class="er" id="fe-er" role="alert"></div><button class="x" type="submit">${x?"Enregistrer les modifications":"Créer la compétition"}</button>
+${x?`<button class="link" type="button" data-act="c-del" data-id="${x.id}">Supprimer cette compétition</button>`:""}</form>`};
 const nm=id=>PF[id]?esc(PF[id].first_name+" "+PF[id].last_name):"Un membre";
 function partHtml(x,c){
   const r=myR(x.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==me.id);
@@ -449,6 +478,8 @@ $("fiche-c").addEventListener("click",async e=>{
       else if(a=="cq-ok"){const z=CQ.find(k=>k.id==q);r=await T("change_requests",{status:"accepted"}).eq("id",q);
         if(!r.error&&z)r=await T("responses",{locked:false}).eq("competition_id",id).eq("member_id",z.member_id)}
       else if(a=="cq-no")r=await T("change_requests",{status:"refused"}).eq("id",q);
+      else if(a=="c-del"){if(!confirm("Supprimer définitivement cette compétition, ses réponses et ses demandes ?"))return;
+        r=await sb.from("competitions").delete().eq("id",id);if(r.error)throw r.error;await loadData();$("fiche").close();return}
       else if(a=="ex-add")r=await sb.from("exceptions").insert({competition_id:id,member_id:$("ex-m").value,granted_by:me.id});
       else if(a=="ex-del")r=await sb.from("exceptions").delete().eq("competition_id",id).eq("member_id",m);
     }
@@ -487,7 +518,7 @@ function openFiche(id){
     if(c.start_list)h+=`<h3>Liste de départ</h3><p style="white-space:pre-line">${esc(c.start_list)}</p>`;
     h+=partHtml(x,c)+listHtml(x);
   }
-  if(adm&&c)h+=admExtra(x)+adminForm(x,c);
+  if(adm)h+=(c?admExtra(x)+adminForm(x,c):"")+compForm(x);
   $("fiche-c").innerHTML=h+'<button class="x" type="button" data-close>Fermer</button>';
   if(adm&&c)$("fa-r").value=c.registration;
   if(!$("fiche").open)$("fiche").showModal();
@@ -497,6 +528,13 @@ $("list").addEventListener("click",openCard);
 $("list").addEventListener("keydown",e=>{if(e.key=="Enter")openCard(e)});
 $("fiche-c").onsubmit=async e=>{e.preventDefault();
   const f=e.target,id=+f.dataset.id,fd=new FormData(f);
+  if(f.id=="fe"){
+    const row={name:fd.get("n").trim(),start_date:fd.get("s"),end_date:fd.get("e"),place:fd.get("l").trim(),organizer:(fd.get("o")||"").trim()||null,level:fd.get("k"),categories:fd.getAll("cat")};
+    if(row.end_date<row.start_date){$("fe-er").textContent="La date de fin doit être après la date de début.";return}
+    const r=id?await sb.from("competitions").update(row).eq("id",id):await sb.from("competitions").insert(row);
+    if(r.error){$("fe-er").textContent="Erreur : "+r.error.message;return}
+    await loadData();if(id)openFiche(id);else $("fiche").close();return;
+  }
   const links=(fd.get("links")||"").split("\n").map(t=>t.trim()).filter(Boolean).map(t=>{const[i,j]=t.split("|");return j?{label:i.trim(),url:j.trim()}:{label:"",url:i.trim()}});
   const row={club_considering:fd.get("cc")=="on",registration:fd.get("reg"),practical_info:fd.get("info"),links,start_list:fd.get("sl")};
   const{error}=await sb.from("competition_club").update(row).eq("competition_id",id);
@@ -513,7 +551,7 @@ const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
 function drawAcct(){
   if(!sb){$("acct").innerHTML="";return}
   $("acct").innerHTML=me
-    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
+    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nc">Nouvelle compétition</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
     :'<span class="guest">Invité</span><button class="chip" id="in">Se connecter</button>';
 }
 async function loadMe(s){
@@ -546,6 +584,7 @@ if(sb){
     if(id=="in")$("login").showModal();
     else if(id=="out")sb.auth.signOut();
     else if(id=="adm"){$("adm-d").showModal();admList()}
+    else if(id=="nc"){$("fiche-c").innerHTML=compForm(null)+'<button class="x" type="button" data-close>Fermer</button>';$("fiche").showModal()}
     else if(id=="nt"){ntList();$("notif").showModal()}};
   $("lf").onsubmit=async e=>{e.preventDefault();$("lf-e").textContent="";
     const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
