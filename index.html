@@ -171,7 +171,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <div id="help-adm" hidden>
 <h3>Pour l'administrateur</h3>
 <ul>
-<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum), coche ses catégories (C1, K1) et ses niveaux, change son code, désactive ou supprime son compte.</li>
+<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
 <li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
 <li><b>Notifications</b> : elles signalent les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
@@ -199,7 +199,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 </form></dialog>
 <dialog id="adm-d" aria-labelledby="ad-t"><div class="hp">
 <h2 id="ad-t">Gestion des membres</h2>
-<p>Coche les catégories (C1, K1) puis les niveaux autorisés (N1, N2, N3, R, C, O) de chaque membre : c'est enregistré tout de suite.</p>
+<p>Pour chaque membre, coche chaque embarcation qu'il pratique (K1, C1), puis les niveaux autorisés dans cette embarcation (N1, N2, N3, R, C, O). Exemple : K1 avec N2 et R, C1 avec N3 et R. C'est enregistré tout de suite.</p>
 <div class="er" id="adm-e" role="alert"></div>
 <div id="adm-l"></div>
 <h3>Ajouter un membre</h3>
@@ -406,7 +406,8 @@ $("mine").onchange=e=>{st.mine=e.target.checked;render()};
 let CL={},RS={},PF={},RQ=[],CQ=[],EX=[],NT=[];
 const ST={yes:"Je viens",maybe:"Je ne sais pas encore",no:"Je ne viens pas"};
 const myR=id=>(RS[id]||[]).find(r=>me&&r.member_id==me.id);
-const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||((me.levels||[]).includes(x.k)&&(me.categories||[]).some(t=>(x.cat||[]).includes(t))));
+const levelBoats=x=>(x.cat||[]).filter(b=>((me.boat_levels||{})[b]||[]).includes(x.k));
+const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||levelBoats(x).length>0);
 const pastille=x=>{const c=CL[x.id];if(!c)return"";const r=myR(x.id);
   return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${ST[r.status]}${r.status=="yes"&&r.boats&&r.boats.length?" "+r.boats.join("+"):""}${r.locked?" ✓":""}</span>`:"")};
 const hov=x=>{if(!me||!CL[x.id])return"";const l=RS[x.id]||[];
@@ -442,7 +443,7 @@ const compForm=x=>{const c=x||{n:"",s:"",e:"",l:"",o:"",k:"R",cat:["C1","K1"]};
 <p class="f">Catégories autorisées : ${CATS.map(t=>`<label><input type="checkbox" name="cat" value="${t}"${(c.cat||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}</p>
 <div class="er" id="fe-er" role="alert"></div><button class="x" type="submit">${x?"Enregistrer les modifications":"Créer la compétition"}</button>
 ${x?`<button class="link" type="button" data-act="c-del" data-id="${x.id}">Supprimer cette compétition</button>`:""}</form>`};
-const boatOpts=x=>{const mc=(me.categories||[]).filter(t=>(x.cat||[]).includes(t));return mc.length?mc:(x.cat||[])};
+const boatOpts=x=>{let o=levelBoats(x);if(!o.length)o=(x.cat||[]).filter(b=>(me.boat_levels||{})[b]);return o.length?o:(x.cat||[])};
 const boatHtml=(x,r)=>{const o=boatOpts(x);if(!o.length)return"";
   return o.length==1?`<p>Embarcation : <b>${o[0]}</b></p>`
     :`<p class="f">Embarcation : ${o.map(t=>`<label><input type="checkbox" id="bt-${t}"${r&&(r.boats||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}<br><small>Coche celle(s) pour laquelle tu t'inscris, avant de répondre « Je viens ».</small></p>`};
@@ -600,7 +601,7 @@ async function admList(){
   const{data,error}=await sb.from("profiles").select("*").order("last_name");
   if(error){$("adm-l").textContent="Erreur : "+error.message;return}
   $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}</div>
-<div class="mc">${CATS.map(c=>ck("categories",c,p)).join("")}<span class="sep"></span>${LV.map(c=>ck("levels",c,p)).join("")}</div>
+${CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
 <div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
 }
 if(sb){
@@ -615,9 +616,11 @@ if(sb){
     const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
     if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
     $("lf-c").value="";$("login").close()};
-  $("adm-l").onchange=async e=>{const c=e.target.closest("input[data-f]");if(!c)return;
-    const row=c.closest(".mb"),f=c.dataset.f,vals=[...row.querySelectorAll(`input[data-f="${f}"]:checked`)].map(i=>i.value);
-    const{error}=await sb.from("profiles").update({[f]:vals}).eq("id",row.dataset.id);
+  $("adm-l").onchange=async e=>{const c=e.target.closest("input[data-bo],input[data-lv]");if(!c)return;
+    if(c.hasAttribute("data-lv")&&c.checked)c.closest(".mc").querySelector("[data-bo]").checked=true;
+    const row=c.closest(".mb"),bl={};
+    row.querySelectorAll(".mc").forEach(m=>{if(m.querySelector("[data-bo]").checked)bl[m.dataset.b]=[...m.querySelectorAll("[data-lv]:checked")].map(i=>i.value)});
+    const{error}=await sb.from("profiles").update({boat_levels:bl,categories:Object.keys(bl),levels:[...new Set(Object.values(bl).flat())]}).eq("id",row.dataset.id);
     $("adm-e").textContent=error?"Erreur : "+error.message:""};
   $("adm-l").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;
     const row=b.closest(".mb"),id=row.dataset.id,a=b.dataset.a,nm=row.querySelector("b").textContent;
