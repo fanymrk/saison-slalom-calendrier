@@ -163,7 +163,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <ul>
 <li><b>Se connecter</b> : bouton en haut de la page, avec ton prénom, ton nom et le code personnel donné par l'administrateur. Sans connexion, tu es « Invité » et tu vois seulement le calendrier public.</li>
 <li><b>Ouvrir une compétition</b> : clique dessus pour voir sa fiche (infos pratiques, liens, liste de départ) et les réponses des autres membres.</li>
-<li><b>Répondre</b> quand les inscriptions sont ouvertes : « Je viens », « Je ne sais pas encore » ou « Je ne viens pas ». « Je ne sais pas encore » se change librement. « Je viens » et « Je ne viens pas » demandent une confirmation, puis la réponse est verrouillée : pour la changer, utilise « Demander une modification ».</li>
+<li><b>Répondre</b> quand les inscriptions sont ouvertes : « Je viens », « Je ne sais pas encore » ou « Je ne viens pas ». « Je ne sais pas encore » se change librement. Si tu as plusieurs catégories (K1 et C1), tu coches l'embarcation avant de répondre « Je viens » ; avec une seule catégorie, elle est choisie automatiquement. « Je viens » et « Je ne viens pas » demandent une confirmation, puis la réponse est verrouillée : pour la changer, utilise « Demander une modification ».</li>
 <li><b>Inscriptions fermées</b> : le bouton « Demander l'ouverture des inscriptions » prévient l'administrateur. Tu vois ensuite sa décision.</li>
 <li><b>Niveau ou catégorie non adaptés</b> : tu peux consulter la fiche, mais pas répondre, sauf autorisation de l'administrateur.</li>
 <li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». La case « Mes réponses seulement » ne garde que tes compétitions.</li>
@@ -408,9 +408,9 @@ const ST={yes:"Je viens",maybe:"Je ne sais pas encore",no:"Je ne viens pas"};
 const myR=id=>(RS[id]||[]).find(r=>me&&r.member_id==me.id);
 const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||((me.levels||[]).includes(x.k)&&(me.categories||[]).some(t=>(x.cat||[]).includes(t))));
 const pastille=x=>{const c=CL[x.id];if(!c)return"";const r=myR(x.id);
-  return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${ST[r.status]}${r.locked?" ✓":""}</span>`:"")};
+  return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${ST[r.status]}${r.status=="yes"&&r.boats&&r.boats.length?" "+r.boats.join("+"):""}${r.locked?" ✓":""}</span>`:"")};
 const hov=x=>{if(!me||!CL[x.id])return"";const l=RS[x.id]||[];
-  return' title="'+esc(["yes","maybe","no"].map(s=>{const g=l.filter(r=>r.status==s).map(r=>PF[r.member_id]?PF[r.member_id].first_name+" "+PF[r.member_id].last_name:"Un membre");return ST[s]+" ("+g.length+")"+(g.length?" : "+g.join(", "):"")}).join("\n"))+'"'};
+  return' title="'+esc(["yes","maybe","no"].map(s=>{const g=l.filter(r=>r.status==s).map(r=>(PF[r.member_id]?PF[r.member_id].first_name+" "+PF[r.member_id].last_name:"Un membre")+(r.boats&&r.boats.length?" ("+r.boats.join("+")+")":""));return ST[s]+" ("+g.length+")"+(g.length?" : "+g.join(", "):"")}).join("\n"))+'"'};
 async function loadData(){
   if(!sb)return;
   const{data,error}=await sb.from("competitions").select("*").order("start_date");
@@ -442,6 +442,10 @@ const compForm=x=>{const c=x||{n:"",s:"",e:"",l:"",o:"",k:"R",cat:["C1","K1"]};
 <p class="f">Catégories autorisées : ${CATS.map(t=>`<label><input type="checkbox" name="cat" value="${t}"${(c.cat||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}</p>
 <div class="er" id="fe-er" role="alert"></div><button class="x" type="submit">${x?"Enregistrer les modifications":"Créer la compétition"}</button>
 ${x?`<button class="link" type="button" data-act="c-del" data-id="${x.id}">Supprimer cette compétition</button>`:""}</form>`};
+const boatOpts=x=>{const mc=(me.categories||[]).filter(t=>(x.cat||[]).includes(t));return mc.length?mc:(x.cat||[])};
+const boatHtml=(x,r)=>{const o=boatOpts(x);if(!o.length)return"";
+  return o.length==1?`<p>Embarcation : <b>${o[0]}</b></p>`
+    :`<p class="f">Embarcation : ${o.map(t=>`<label><input type="checkbox" id="bt-${t}"${r&&(r.boats||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}<br><small>Coche celle(s) pour laquelle tu t'inscris, avant de répondre « Je viens ».</small></p>`};
 const nm=id=>PF[id]?esc(PF[id].first_name+" "+PF[id].last_name):"Un membre";
 function partHtml(x,c){
   const r=myR(x.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==me.id);
@@ -450,13 +454,13 @@ function partHtml(x,c){
   if(c.registration=="open"){
     if(!eligible(x,c))return h+"<p>Tu n'as pas le niveau ou la catégorie requis pour cette compétition. Tu peux consulter les informations et les réponses des autres membres.</p>";
     if(r&&r.locked){
-      h+=`<p>Ta réponse : <b>${ST[r.status]}</b> (confirmée).</p>`;
+      h+=`<p>Ta réponse : <b>${ST[r.status]}${r.boats&&r.boats.length?" en "+r.boats.join(" + "):""}</b> (confirmée).</p>`;
       if(cq&&cq.status=="pending")h+="<p>Ta demande de modification est en attente de l'administrateur.</p>";
       else{if(cq&&cq.status=="refused")h+="<p>Ta dernière demande de modification a été refusée.</p>";
         h+=`<button class="chip" data-act="chg" data-id="${x.id}">Demander une modification</button>`}
       return h;
     }
-    return h+`<p>${r?"Ta réponse : <b>"+ST[r.status]+"</b>":"Tu n'as pas encore répondu."}</p><div class="row">`
+    return h+boatHtml(x,r)+`<p>${r?"Ta réponse : <b>"+ST[r.status]+"</b>":"Tu n'as pas encore répondu."}</p><div class="row">`
       +["yes","maybe","no"].map(s=>`<button class="chip" data-act="ans" data-s="${s}" data-id="${x.id}" style="--col:var(--accent)"${r&&r.status==s?' aria-pressed="true"':""}>${ST[s]}</button>`).join("")+"</div>";
   }
   if(rq&&rq.status=="pending")return h+"<p>Ta demande d'ouverture des inscriptions a été envoyée à l'administrateur.</p>";
@@ -466,7 +470,7 @@ function partHtml(x,c){
 function listHtml(x){
   const l=RS[x.id]||[],adm=me.role=="admin",g=s=>l.filter(r=>r.status==s);
   return"<h3>Réponses des membres</h3>"+["yes","maybe","no"].map(s=>`<p><b>${ST[s]}</b> (${g(s).length})${g(s).length?" : ":""}`
-    +g(s).map(r=>nm(r.member_id)+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")).join(", ")+"</p>").join("");
+    +g(s).map(r=>nm(r.member_id)+(r.boats&&r.boats.length?" ("+r.boats.join(" + ")+")":"")+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")).join(", ")+"</p>").join("");
 }
 function admExtra(x){
   let h="";const rq=RQ.filter(q=>q.competition_id==x.id&&q.status=="pending"),cq=CQ.filter(q=>q.competition_id==x.id&&q.status=="pending");
@@ -482,9 +486,12 @@ $("fiche-c").addEventListener("click",async e=>{
   const id=+b.dataset.id,a=b.dataset.act,T=(t,w)=>sb.from(t).update(w);
   try{
     let r;
-    if(a=="ans"){const s=b.dataset.s;
-      if(s!="maybe"&&!confirm("Confirmer « "+ST[s]+" » ? Cette réponse sera définitive : pour la changer, tu devras demander une modification à l'administrateur."))return;
-      r=await sb.from("responses").upsert({competition_id:id,member_id:me.id,status:s},{onConflict:"competition_id,member_id"})}
+    if(a=="ans"){const s=b.dataset.s;let boats=[];
+      if(s=="yes"){const o=boatOpts(E.find(z=>z.id===id));
+        boats=o.length==1?o:o.filter(t=>$("bt-"+t)&&$("bt-"+t).checked);
+        if(o.length&&!boats.length){alert("Choisis ton embarcation ("+o.join(" ou ")+") avant de répondre « Je viens ».");return}}
+      if(s!="maybe"&&!confirm("Confirmer « "+ST[s]+(boats.length?" en "+boats.join(" + "):"")+" » ? Cette réponse sera définitive : pour la changer, tu devras demander une modification à l'administrateur."))return;
+      r=await sb.from("responses").upsert({competition_id:id,member_id:me.id,status:s,boats},{onConflict:"competition_id,member_id"})}
     else if(a=="req")r=await sb.from("registration_requests").insert({competition_id:id,member_id:me.id});
     else if(a=="chg"){const m=prompt("Pourquoi souhaites-tu modifier ta réponse ? (facultatif)");if(m===null)return;r=await sb.from("change_requests").insert({competition_id:id,member_id:me.id,message:m||null})}
     else if(me.role=="admin"){
