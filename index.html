@@ -171,7 +171,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <div id="help-adm" hidden>
 <h3>Pour l'administrateur</h3>
 <ul>
-<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
+<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum, rôle Adhérent ou Entraîneur), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
 <li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
 <li><b>Notifications</b> : elles signalent les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
@@ -207,6 +207,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <label class="f" for="af">Prénom</label><input id="af" type="text" required>
 <label class="f" for="al">Nom</label><input id="al" type="text" required>
 <label class="f" for="ac">Code personnel (6 caractères minimum)</label><input id="ac" type="text" minlength="6" required>
+<label class="f" for="ar">Rôle</label><select id="ar"><option value="member">Adhérent</option><option value="coach">Entraîneur</option></select>
 <button class="x" type="submit">Créer le compte</button>
 </form>
 <button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
@@ -449,6 +450,7 @@ const boatHtml=(x,r)=>{const o=boatOpts(x);if(!o.length)return"";
     :`<p class="f">Embarcation : ${o.map(t=>`<label><input type="checkbox" id="bt-${t}"${r&&(r.boats||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}<br><small>Coche celle(s) pour laquelle tu t'inscris, avant de répondre « Je viens ».</small></p>`};
 const nm=id=>PF[id]?esc(PF[id].first_name+" "+PF[id].last_name):"Un membre";
 function partHtml(x,c){
+  if(me.role=="coach")return"";
   const r=myR(x.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==me.id);
   const cq=CQ.filter(q=>q.competition_id==x.id&&q.member_id==me.id).sort((a,b)=>b.id-a.id)[0];
   let h="<h3>Ma participation</h3>";
@@ -480,7 +482,7 @@ function admExtra(x){
     cq.forEach(q=>h+=`<p>${nm(q.member_id)} demande à modifier sa réponse${q.message?" : « "+esc(q.message)+" »":""}. <button class="link" data-act="cq-ok" data-id="${x.id}" data-q="${q.id}">Autoriser</button><button class="link" data-act="cq-no" data-id="${x.id}" data-q="${q.id}">Refuser</button></p>`)}
   const ex=EX.filter(e=>e.competition_id==x.id);
   return h+"<h3>Autorisations exceptionnelles</h3>"+(ex.length?"<ul>"+ex.map(e=>`<li>${nm(e.member_id)} <button class="link" data-act="ex-del" data-id="${x.id}" data-m="${e.member_id}">Retirer</button></li>`).join("")+"</ul>":"<p>Aucune.</p>")
-    +`<div class="row"><select id="ex-m" aria-label="Membre">${Object.values(PF).filter(p=>p.active).map(p=>`<option value="${p.id}">${esc(p.first_name+" "+p.last_name)}</option>`).join("")}</select><button class="chip" data-act="ex-add" data-id="${x.id}">Autoriser ce membre</button></div>`;
+    +`<div class="row"><select id="ex-m" aria-label="Membre">${Object.values(PF).filter(p=>p.active&&p.role!="coach").map(p=>`<option value="${p.id}">${esc(p.first_name+" "+p.last_name)}</option>`).join("")}</select><button class="chip" data-act="ex-add" data-id="${x.id}">Autoriser ce membre</button></div>`;
 }
 $("fiche-c").addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]");if(!b)return;
@@ -577,7 +579,7 @@ const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
 function drawAcct(){
   if(!sb){$("acct").innerHTML="";return}
   $("acct").innerHTML=me
-    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nc">Nouvelle compétition</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
+    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":me.role=="coach"?" · entraîneur":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nc">Nouvelle compétition</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
     :'<span class="guest">Invité</span><button class="chip" id="in">Se connecter</button>';
 }
 async function loadMe(s){
@@ -597,11 +599,12 @@ async function api(action,p){
   return j;
 }
 const ck=(f,v,p)=>`<label><input type="checkbox" data-f="${f}" value="${v}"${(p[f]||[]).includes(v)?" checked":""}>${v}</label>`;
+const roleSel=p=>p.role=="admin"||(me&&p.id==me.id)?"":` <select data-role aria-label="Rôle de ${esc(p.first_name)}"><option value="member"${p.role=="member"?" selected":""}>Adhérent</option><option value="coach"${p.role=="coach"?" selected":""}>Entraîneur</option></select>`;
 async function admList(){
   const{data,error}=await sb.from("profiles").select("*").order("last_name");
   if(error){$("adm-l").textContent="Erreur : "+error.message;return}
-  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}</div>
-${CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
+  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}</div>
+${p.role=="coach"?"":CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
 <div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
 }
 if(sb){
@@ -616,7 +619,10 @@ if(sb){
     const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
     if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
     $("lf-c").value="";$("login").close()};
-  $("adm-l").onchange=async e=>{const c=e.target.closest("input[data-bo],input[data-lv]");if(!c)return;
+  $("adm-l").onchange=async e=>{
+    const rs=e.target.closest("select[data-role]");
+    if(rs){try{await api("set_role",{id:rs.closest(".mb").dataset.id,role:rs.value});$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}return}
+    const c=e.target.closest("input[data-bo],input[data-lv]");if(!c)return;
     if(c.hasAttribute("data-lv")&&c.checked)c.closest(".mc").querySelector("[data-bo]").checked=true;
     const row=c.closest(".mb"),bl={};
     row.querySelectorAll(".mc").forEach(m=>{if(m.querySelector("[data-bo]").checked)bl[m.dataset.b]=[...m.querySelectorAll("[data-lv]:checked")].map(i=>i.value)});
@@ -631,7 +637,7 @@ if(sb){
       $("adm-e").textContent="";await admList();
     }catch(err){$("adm-e").textContent=err.message}};
   $("adm-f").onsubmit=async e=>{e.preventDefault();
-    try{await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value});
+    try{await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value,role:$("ar").value});
       e.target.reset();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
 }else drawAcct();
 $("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help").showModal()};
