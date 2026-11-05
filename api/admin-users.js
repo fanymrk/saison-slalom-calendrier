@@ -40,11 +40,25 @@ module.exports = async (req, res) => {
         user_metadata: { first_name: first, last_name: last },
       });
       if (error) throw new Error(/already|registered|exists/i.test(error.message) ? "Ce prénom et ce nom existent déjà." : error.message);
+      if (b.role === "coach") {
+        const { error: e3 } = await admin.from("profiles").update({ role: "coach" }).eq("id", data.user.id);
+        if (e3) throw e3;
+      }
       return ok({ id: data.user.id });
     }
 
     if (!b.id) throw new Error("Membre manquant.");
 
+    if (b.action === "set_role") {
+      if (b.id === u.user.id) throw new Error("Tu ne peux pas changer ton propre rôle.");
+      if (!["member", "coach"].includes(b.role)) throw new Error("Rôle inconnu.");
+      const { data: t } = await admin.from("profiles").select("role").eq("id", b.id).single();
+      if (!t) throw new Error("Membre introuvable.");
+      if (t.role === "admin") throw new Error("Le rôle d'un administrateur ne se change pas ici.");
+      const { error } = await admin.from("profiles").update({ role: b.role }).eq("id", b.id);
+      if (error) throw error;
+      return ok();
+    }
     if (b.action === "reset_code") {
       need(b.code);
       const { error } = await admin.auth.admin.updateUserById(b.id, { password: String(b.code) });
