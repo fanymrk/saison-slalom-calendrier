@@ -95,7 +95,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .hp ul{padding-left:20px;margin:6px 0}
 .hp .tag{margin:0 4px 0 0}
 .hp .x{display:block;margin:22px 0 0;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
-.hp input[type=text],.hp input[type=password],.hp input[type=date]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:500 16px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink)}
+.hp input[type=text],.hp input[type=password],.hp input[type=date],.hp input[type=email]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:500 16px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink)}
 .hp label.f{font-size:14px;font-weight:600}
 .er{color:#C8161D;font-size:14px;min-height:20px}
 #adm-d{max-width:760px}
@@ -114,6 +114,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .k[data-r=no]{opacity:.55}.k[data-r=no] h3{text-decoration:line-through}
 .pill[data-r=yes]{outline:2px solid var(--ink)}.pill[data-r=maybe]{outline:2px dashed var(--ink)}.pill[data-r=no]{opacity:.4;text-decoration:line-through}
 .day.yes{box-shadow:inset 0 0 0 3px var(--accent)}.dc.yes{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
+.em{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:500 14px "DM Sans",sans-serif;margin:6px 0;background:#fff;color:var(--ink)}
 #jf{margin:10px 0}#jf input{width:auto;flex:1 1 150px;margin:0}
 @media(max-width:760px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
@@ -183,6 +184,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum, rôle Adhérent ou Entraîneur), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
 <li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
+<li><b>Récap</b> : quand les inscriptions d'une compétition sont « Fermées », le bouton « Envoyer le récap et prévenir les participants » envoie le récap, la liste à inscrire à l'entraîneur et une confirmation à chaque compétiteur. Renseigne d'abord les adresses e-mail dans « Membres ».</li>
 <li><b>Notifications</b> : elles signalent les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
 </ul>
 </div>
@@ -216,6 +218,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <label class="f" for="af">Prénom</label><input id="af" type="text" required>
 <label class="f" for="al">Nom</label><input id="al" type="text" required>
 <label class="f" for="ac">Code personnel (6 caractères minimum)</label><input id="ac" type="text" minlength="6" required>
+<label class="f" for="ae">E-mail pour les envois (facultatif)</label><input id="ae" type="email">
 <label class="f" for="ar">Rôle</label><select id="ar"><option value="member">Adhérent</option><option value="coach">Entraîneur</option></select>
 <button class="x" type="submit">Créer le compte</button>
 </form>
@@ -500,6 +503,9 @@ function listHtml(x){
   return"<h3>Autres réponses des membres</h3>"+["maybe","no"].map(s=>`<p><b>${ST[s]}</b> (${g(s).length})${g(s).length?" : ":""}`
     +g(s).map(r=>nm(r.member_id)+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")).join(", ")+"</p>").join("");
 }
+const recapHtml=(x,c)=>"<h3>Récap et e-mails</h3>"+(c.registration=="closed"
+  ?`<p>Envoie le récap, la liste à l'entraîneur et une confirmation à chaque compétiteur qui vient.</p><button class="chip" data-act="recap" data-id="${x.id}">Envoyer le récap et prévenir les participants</button>`
+  :"<p>Passe d'abord les inscriptions sur « Fermées » pour pouvoir envoyer le récap.</p>");
 function admExtra(x){
   let h="";const rq=RQ.filter(q=>q.competition_id==x.id&&q.status=="pending"),cq=CQ.filter(q=>q.competition_id==x.id&&q.status=="pending");
   if(rq.length||cq.length){h+="<h3>Demandes à traiter</h3>";
@@ -533,6 +539,18 @@ $("fiche-c").addEventListener("click",async e=>{
       else if(a=="cq-ok"){const z=CQ.find(k=>k.id==q);r=await T("change_requests",{status:"accepted"}).eq("id",q);
         if(!r.error&&z)r=await T("responses",{locked:false}).eq("competition_id",id).eq("member_id",z.member_id)}
       else if(a=="cq-no")r=await T("change_requests",{status:"refused"}).eq("id",q);
+      else if(a=="recap"){
+        const pv=await api("recap",{competition_id:id,dry_run:true},"/api/send-recap");
+        if(!pv.smtp_ok){alert("L'envoi d'e-mails n'est pas encore configuré : ajoute SMTP_USER et SMTP_PASS dans Vercel, puis redéploie.");return}
+        const msg="Envoi pour « "+pv.competition+" » :\n• 1 récap à : "+(pv.recap_to.join(", ")||"personne (aucune adresse)")
+          +"\n• Liste à inscrire ("+pv.to_register+" personne"+(pv.to_register>1?"s":"")+") à l'entraîneur : "+(pv.coach_to.join(", ")||"aucune adresse")
+          +"\n• "+pv.participants.length+" confirmation(s) aux compétiteurs : "+(pv.participants.join(", ")||"aucun")
+          +(pv.missing.length?"\n\nSans adresse e-mail (aucun mail pour eux) : "+pv.missing.join(", "):"")
+          +(pv.last_sent?"\n\n⚠ Un envoi a déjà eu lieu le "+new Date(pv.last_sent).toLocaleString("fr-FR")+".":"")+"\n\nConfirmer l'envoi ?";
+        if(!confirm(msg))return;
+        const rs=await api("recap",{competition_id:id,force:!!pv.last_sent},"/api/send-recap");
+        alert("E-mails envoyés : "+rs.sent+"."+(rs.failed.length?"\nÉchecs : "+rs.failed.map(f=>f.to+" ("+f.error+")").join(", "):""));
+        return}
       else if(a=="c-del"){if(!confirm("Supprimer définitivement cette compétition, ses réponses et ses demandes ?"))return;
         r=await sb.from("competitions").delete().eq("id",id);if(r.error)throw r.error;await loadData();$("fiche").close();return}
       else if(a=="ex-add")r=await sb.from("exceptions").insert({competition_id:id,member_id:$("ex-m").value,granted_by:me.id});
@@ -573,7 +591,7 @@ function openFiche(id){
     if(c.start_list)h+=`<h3>Liste de départ</h3><p style="white-space:pre-line">${esc(c.start_list)}</p>`;
     h+=partHtml(x,c)+presenceHtml(x)+listHtml(x);
   }
-  if(adm)h+=(c?admExtra(x)+adminForm(x,c):"")+compForm(x);
+  if(adm)h+=(c?recapHtml(x,c)+admExtra(x)+adminForm(x,c):"")+compForm(x);
   $("fiche-c").innerHTML=h+'<button class="x" type="button" data-close>Fermer</button>';
   if(adm&&c)$("fa-r").value=c.registration;
   if(!$("fiche").open)$("fiche").showModal();
@@ -624,9 +642,9 @@ async function loadMe(s){
   drawAcct();
   loadData();
 }
-async function api(action,p){
+async function api(action,p,url="/api/admin-users"){
   const{data:{session}}=await sb.auth.getSession();
-  const r=await fetch("/api/admin-users",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({action,...p})});
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({action,...p})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.error||"Erreur "+r.status);
   return j;
@@ -636,7 +654,9 @@ const roleSel=p=>p.role=="admin"||(me&&p.id==me.id)?"":` <select data-role aria-
 async function admList(){
   const{data,error}=await sb.from("profiles").select("*").order("last_name");
   if(error){$("adm-l").textContent="Erreur : "+error.message;return}
+  const{data:ct}=await sb.from("member_contacts").select("*");const EM={};(ct||[]).forEach(r=>EM[r.member_id]=r.email);
   $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}</div>
+<input class="em" type="email" data-email placeholder="E-mail pour les envois" aria-label="E-mail de ${esc(p.first_name)}" value="${esc(EM[p.id]||"")}">
 ${p.role=="coach"?"":CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
 <div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
 }
@@ -653,6 +673,10 @@ if(sb){
     if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
     $("lf-c").value="";$("login").close()};
   $("adm-l").onchange=async e=>{
+    const em=e.target.closest("input[data-email]");
+    if(em){const id=em.closest(".mb").dataset.id,v=em.value.trim();
+      const r=v?await sb.from("member_contacts").upsert({member_id:id,email:v},{onConflict:"member_id"}):await sb.from("member_contacts").delete().eq("member_id",id);
+      $("adm-e").textContent=r.error?"Erreur : "+r.error.message:"";return}
     const rs=e.target.closest("select[data-role]");
     if(rs){try{await api("set_role",{id:rs.closest(".mb").dataset.id,role:rs.value});$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}return}
     const c=e.target.closest("input[data-bo],input[data-lv]");if(!c)return;
@@ -670,7 +694,8 @@ if(sb){
       $("adm-e").textContent="";await admList();
     }catch(err){$("adm-e").textContent=err.message}};
   $("adm-f").onsubmit=async e=>{e.preventDefault();
-    try{await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value,role:$("ar").value});
+    try{const j=await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value,role:$("ar").value});
+      const ad=$("ae").value.trim();if(ad)await sb.from("member_contacts").upsert({member_id:j.id,email:ad},{onConflict:"member_id"});
       e.target.reset();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
 }else drawAcct();
 $("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help-coach").hidden=!(me&&(me.role=="coach"||me.role=="admin"));$("help").showModal()};
