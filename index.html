@@ -13,12 +13,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "DM Sans",system-ui,sans-serif}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
-.top{padding:24px 0 8px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.hd{gap:16px}
-.logo{width:56px;height:56px;border-radius:14px;background:#fff;object-fit:contain;flex:none}
-h1{font:800 clamp(24px,4vw,32px)/1.1 "Bricolage Grotesque",sans-serif;margin:0}
-.ttl small{display:block;font:500 13px "DM Sans",sans-serif;color:var(--mute)}
 #q{flex:1 1 220px;height:48px;border-radius:99px;border:1px solid var(--line);padding:0 22px;font:500 16px "DM Sans",sans-serif;background:#fff;color:var(--ink);min-width:0}
 select{font:500 15px "DM Sans",sans-serif;padding:10px 14px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--ink)}
 .seg{display:flex;gap:4px;background:#fff;padding:4px;border-radius:99px}
@@ -31,13 +26,9 @@ select{font:500 15px "DM Sans",sans-serif;padding:10px 14px;border:1px solid var
 .chip small{opacity:.7;margin-left:5px}
 .chip:disabled{opacity:.35;cursor:default}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #FFB000;outline-offset:2px}
-.tools{margin:14px 0 4px}
 label.sw{display:flex;gap:6px;align-items:center;font-size:15px;cursor:pointer}
 .link{background:none;border:0;color:var(--accent);font:600 15px "DM Sans",sans-serif;cursor:pointer;text-decoration:underline;padding:6px}
-#count{color:var(--mute);font-size:14px;margin-left:auto}
 #lab{font:800 22px "Bricolage Grotesque",sans-serif;min-width:150px;text-align:center;text-transform:capitalize}
-main{padding:12px 0 60px}
-.dash{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin:16px 0 8px}
 .t1,.t2{border-radius:24px;padding:28px}
 .t1{background:var(--accent);color:#fff}.t2{background:var(--ink);color:#fff}
 .t1 p{margin:4px 0 0;color:#E3EDFF}
@@ -48,16 +39,6 @@ main{padding:12px 0 60px}
 .big2{font:800 72px/1 "Bricolage Grotesque",sans-serif;margin:8px 0}
 .bar2{display:flex;height:14px;border-radius:99px;overflow:hidden;gap:2px;margin:18px 0 10px}.bar2 i{display:block}
 .leg{font-size:13px;color:#B9C7F0}
-h2{font:800 28px "Bricolage Grotesque",sans-serif;margin:32px 0 8px;text-align:center;text-transform:capitalize}
-h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin-left:10px}
-.r{display:grid;grid-template-columns:1fr 72px 1fr;grid-template-areas:"l m r"}
-.m{grid-area:m;display:flex;justify-content:center;align-items:center;background:linear-gradient(var(--accent),var(--accent)) center/4px 100% no-repeat}
-.m i{width:9px;height:52px;border-radius:5px;margin:0 3px;background:#C8161D;box-shadow:0 0 0 4px var(--bg)}.m i+i{background:#0B2480}
-.k{background:#fff;border-radius:24px;padding:20px 28px;margin:8px 0;align-self:center}
-.cg{align-self:center}.cg.L{grid-area:l;text-align:right}.cg.R{grid-area:r}
-.k b{font:800 32px/1 "Bricolage Grotesque",sans-serif;color:var(--accent);display:block}
-.k h3{margin:6px 0 0;font:700 19px "DM Sans",sans-serif}
-.k p{margin:4px 0 0;font-size:14px;line-height:1.6;color:var(--mute)}
 .k.past{opacity:.5}.k.next{box-shadow:0 0 0 2px var(--accent)}
 .nx{font:700 12px "DM Sans",sans-serif;color:var(--accent);margin-left:8px}
 .tag{display:inline-block;background:var(--col);color:#fff;font:700 12px "DM Sans",sans-serif;letter-spacing:.04em;padding:1px 9px;border-radius:99px;margin-right:8px}
@@ -102,7 +83,6 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .mb{background:var(--bg);border-radius:16px;padding:12px 16px;margin:8px 0}
 .mc{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0;font-size:14px}.mc label{display:flex;gap:4px;align-items:center}.sep{width:1px;background:var(--line)}
 .ma{display:flex;gap:6px;flex-wrap:wrap}
-.guest{font:600 13px "DM Sans",sans-serif;color:var(--mute)}
 .cl{display:inline-block;background:#E3EDFF;color:#0B2480;font:700 12px "DM Sans",sans-serif;padding:3px 10px;border-radius:99px;margin-top:8px}
 .k[data-id]:not([data-id=""]){cursor:pointer}.k:focus-visible{outline:3px solid #FFB000}
 .hp textarea,.hp select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:500 15px "DM Sans",sans-serif;margin:4px 0 12px;color:var(--ink);background:#fff}
@@ -116,48 +96,134 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .day.yes{box-shadow:inset 0 0 0 3px var(--accent)}.dc.yes{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
 .em{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:500 14px "DM Sans",sans-serif;margin:6px 0;background:#fff;color:var(--ink)}
 #jf{margin:10px 0}#jf input{width:auto;flex:1 1 150px;margin:0}
-@media(max-width:760px){.dash{grid-template-columns:1fr}}
-@media(max-width:700px){.r{grid-template-columns:44px 1fr;grid-template-areas:"m c"}.cg.L,.cg.R{grid-area:c;text-align:left}.m i{height:40px}.k{padding:16px 20px}}
-@media(max-width:600px){.day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}#count{width:100%;margin:0}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+[hidden]{display:none!important}
+.wrap{max-width:1180px}
+.tb{background:#fff;border-bottom:1px solid #D7E2F7}
+.tbi{display:flex;align-items:center;gap:24px;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none}
+.logo{width:46px;height:46px;border-radius:12px;background:#fff;object-fit:contain;flex:none}
+h1{font:800 20px/1.1 "Bricolage Grotesque",sans-serif;margin:0}
+.ttl small{display:block;font:500 12px "DM Sans",sans-serif;color:var(--mute);margin-top:2px}
+.tabs{display:flex;gap:4px}
+.tabs button{font:600 15px "DM Sans",sans-serif;border:0;background:none;color:var(--mute);padding:0 16px;min-height:44px;border-radius:99px;cursor:pointer}
+.tabs button[aria-current=page]{background:var(--ink);color:#fff}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ib{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;font:700 18px "DM Sans",sans-serif;flex:none}
+.me{display:flex;align-items:center;gap:8px;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:0 16px;font:600 14px "DM Sans",sans-serif;color:var(--ink);cursor:pointer}
+.sr{padding-top:10px;padding-bottom:10px}
+#q{width:100%;flex:none}
+.sb{background:var(--bg);position:sticky;top:0;z-index:20}
+.sbi{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:10px}
+.fb{display:flex;align-items:center;gap:8px;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:0 18px;font:600 14px "DM Sans",sans-serif;color:var(--ink);cursor:pointer}
+.bdg{background:#C8161D;color:#fff;border-radius:99px;font:700 12px "DM Sans",sans-serif;padding:2px 8px}
+#fn{background:var(--accent)}
+.ch{display:flex;align-items:center;gap:6px;min-height:36px;background:var(--accent);color:#fff;border-radius:99px;padding:0 14px;font:600 13px "DM Sans",sans-serif;border:0;cursor:pointer}
+#count{color:var(--mute);font-size:14px;margin-left:auto}
+main{padding:4px 0 60px}
+.mainx{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start}
+.mainx.nodash{grid-template-columns:minmax(0,1fr)}
+#list{min-width:0}
+#dash{position:sticky;top:calc(var(--sbh,0px) + 16px)}
+.dash{display:flex;flex-direction:column;gap:14px}
+.t1,.t2{padding:24px}
+.dash .big{font-size:64px;margin:14px 0 6px}.dash .lieu{font-size:26px}.dash .big2{font-size:56px}
+main h2{font:800 28px "Bricolage Grotesque",sans-serif;margin:16px 0 0;text-transform:capitalize;position:sticky;top:var(--sbh,0px);background:var(--bg);padding:12px 0 8px;z-index:10;display:flex;align-items:baseline;gap:12px}
+main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
+#detail h2{position:static;padding:0;margin:20px 0 8px;font-size:22px}
+.wk{font:700 12px "DM Sans",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin:14px 0 8px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.k{background:#fff;border-radius:20px;padding:16px 18px;display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px}
+#detail .k{margin:8px 0}
+.d{text-align:center;line-height:1}
+.d b{display:block;font:800 26px/1 "Bricolage Grotesque",sans-serif;color:var(--accent)}
+.d i{font:500 12px "DM Sans",sans-serif;font-style:normal;color:var(--mute);text-transform:capitalize}
+.kb{min-width:0}
+.kb h3{margin:6px 0 2px;font:700 18px/1.25 "DM Sans",sans-serif}
+.kb p{margin:0;font-size:13px;line-height:1.45;color:var(--mute)}
+.stl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.stl .cl{margin:0}
+.cl.my.maybe{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.back{display:none;align-items:center;gap:6px;min-height:44px;border:0;background:none;color:var(--accent);font:600 15px "DM Sans",sans-serif;cursor:pointer;padding:0;margin:-8px 0 8px}
+.fl .flh{display:flex;justify-content:space-between;align-items:center}
+.fl h3{margin-top:18px}
+.swr{display:flex;align-items:center;justify-content:space-between;min-height:52px;border-top:1px solid #E3EAF8;font:500 16px "DM Sans",sans-serif;cursor:pointer}
+.tgl{appearance:none;-webkit-appearance:none;width:52px;height:30px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;margin:0;flex:none}
+.tgl::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.tgl:checked{background:var(--accent)}.tgl:checked::after{left:25px}
+#menu{margin:64px 24px auto auto;width:300px}
+#menu-l{padding:14px}
+.mh0{display:flex;flex-direction:column;padding:4px 6px 12px;border-bottom:1px solid #E3EAF8;margin-bottom:6px}.mh0 small{color:var(--mute);font-size:13px}
+#menu-l button{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:none;text-align:left;padding:12px 14px;border-radius:12px;font:500 15px "DM Sans",sans-serif;color:var(--ink);cursor:pointer;min-height:44px}
+#menu-l button:hover{background:var(--bg)}#menu-l .dg{color:#C8161D}
+.bn{display:none}
+@media(max-width:900px){.mainx{grid-template-columns:1fr}#dash{position:static}#dash .t2{display:none}}
+@media(max-width:700px){
+  .tabs,#help-btn,.ttl small{display:none}
+  .tbi{gap:12px}
+  .sb{position:static}
+  main h2{top:0}
+  .bn{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;left:0;right:0;bottom:0;height:calc(68px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:#fff;border-top:1px solid #D7E2F7;z-index:30}
+  .bn button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 11px "DM Sans",sans-serif;color:var(--mute);cursor:pointer;min-height:44px}
+  .bn [aria-current=page]{color:var(--accent)}
+  main{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  #count{width:100%;margin:0}
+  dialog{width:100%;max-width:none;margin:auto 0 0;border-radius:24px 24px 0 0;max-height:92vh}
+  #menu,#adm-d,#fiche{max-width:none}
+  #fiche{height:100%;max-height:none;margin:0;border-radius:0}
+  .back{display:flex}
+  .day{min-height:58px;padding:3px}.pill{font-size:0;min-height:6px;height:6px;padding:0}.cal{gap:3px}.card{padding:12px}
+  .g{grid-template-columns:1fr}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js"></script>
 </head>
 <body>
-<div class="top"><div class="wrap">
-<div class="row hd">
-<img class="logo" src="logo-lagny.png" alt="Canoë Kayak Lagny" width="56" height="56">
-<div class="ttl"><h1>Calendrier Slalom</h1><small>Source FFCK, édité le 22/10/2026</small></div>
-<input type="search" id="q" placeholder="Rechercher un lieu, un club…" aria-label="Recherche">
-<div class="seg" id="views" role="group" aria-label="Affichage"><button data-v="l">Liste</button><button data-v="m">Mois</button><button data-v="y">Année</button></div>
-<div class="row" id="acct"></div>
+<header class="tb"><div class="wrap tbi">
+<a class="brand" href="./"><img class="logo" src="logo-lagny.png" alt="Canoë Kayak Lagny" width="46" height="46"><div class="ttl"><h1>Calendrier Slalom</h1><small>Source FFCK, édité le 22/10/2026</small></div></a>
+<nav class="tabs" id="secs" aria-label="Sections"><button data-sec="cal" aria-current="page">Calendrier</button><button data-sec="mine" aria-current="false">Mes compétitions</button></nav>
+<div class="tbr"><button class="ib" id="srch-b" aria-label="Rechercher" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button><button class="ib" id="help-btn" aria-label="Comment ça marche" aria-haspopup="dialog">?</button><div id="acct"></div></div>
 </div>
-<div class="row" id="chips" role="group" aria-label="Niveau de compétition" style="margin-top:18px"></div>
-<div class="row tools">
-<select id="m" aria-label="Mois"></select>
-<div class="row" id="nav"><button class="chip" id="prev" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" aria-label="Suivant">›</button><button class="link" id="tod">Aujourd'hui</button></div>
-<label class="sw"><input type="checkbox" id="fut"> Masquer les passées</label>
-<label class="sw" id="mine-w" style="display:none"><input type="checkbox" id="mine"> Mes réponses seulement</label>
-<button class="link" id="rst">Réinitialiser</button>
-<button class="chip" id="help-btn" aria-haspopup="dialog">? Comment ça marche</button>
+<div class="wrap sr" id="sr" hidden><input type="search" id="q" placeholder="Rechercher un lieu, un club…" aria-label="Recherche"></div></header>
+<div class="sb" id="sb"><div class="wrap sbi">
+<div class="seg" id="views" role="group" aria-label="Affichage"><button data-v="l">Liste</button><button data-v="m">Mois</button><button data-v="y">Année</button></div>
+<button class="fb" id="fb" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtres <span class="bdg" id="fn" hidden></span></button>
+<div class="row" id="af"></div>
+<div class="row" id="nav"><button class="chip" id="prev" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" aria-label="Suivant">›</button></div>
+<button class="fb" id="tod">Aujourd'hui</button>
 <span id="count" aria-live="polite"></span>
-</div></div></div>
-<main><div class="wrap"><div id="dash"></div><div id="list"></div></div></main>
+</div></div>
+<main><div class="wrap"><div id="mainx" class="mainx"><div id="list"></div><aside id="dash" aria-label="Résumé"></aside></div></div></main>
+<nav class="bn" id="bn" aria-label="Sections">
+<button data-sec="cal" aria-current="page"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>Calendrier</button>
+<button data-sec="mine" aria-current="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Mes courses</button>
+<button id="more-b" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>Plus</button>
+</nav>
 
+<dialog id="filters" aria-labelledby="fl-t"><div class="hp fl">
+<div class="flh"><h2 id="fl-t">Filtres</h2><button class="link" type="button" id="rst">Réinitialiser</button></div>
+<h3>Niveau</h3><div class="row" id="chips" role="group" aria-label="Niveau de compétition"></div>
+<div id="m-w"><h3>Mois</h3><select id="m" aria-label="Mois"></select></div>
+<h3>Affichage</h3>
+<label class="swr"><span>Masquer les compétitions passées</span><input type="checkbox" id="fut" class="tgl"></label>
+<label class="swr" id="mine-w" style="display:none"><span>Mes réponses seulement</span><input type="checkbox" id="mine" class="tgl"></label>
+<button class="x" type="button" data-close id="fl-ok">Voir les compétitions</button>
+</div></dialog>
+<dialog id="menu" aria-label="Mon compte"><div id="menu-l"></div></dialog>
 <dialog id="help" aria-labelledby="hp-t"><div class="hp">
 <h2 id="hp-t">Comment ça marche ?</h2>
 <p>Ce calendrier regroupe les compétitions de slalom à venir (octobre 2026 à fin 2027), d'après le calendrier officiel de la FFCK. Les adhérents de CK Lagny peuvent en plus se connecter pour répondre aux compétitions.</p>
 <h3>Choisir l'affichage</h3>
 <ul>
-<li><b>Liste</b> : toutes les courses classées par mois. Les compétitions du même week-end sont du même côté de la frise. La carte bleue indique la prochaine course et les jours restants.</li>
+<li><b>Liste</b> : toutes les courses classées par mois, avec les compétitions d'un même week-end regroupées côte à côte. La carte bleue indique la prochaine course et les jours restants.</li>
 <li><b>Mois</b> : un calendrier classique. Les jours avec une course sont colorés : clique sur un jour pour voir le détail.</li>
 <li><b>Année</b> : les 12 mois d'un coup pour repérer les périodes chargées. Clique sur un jour ou un mois pour l'ouvrir.</li>
 </ul>
 <h3>Filtrer</h3>
 <ul>
-<li>Les boutons de niveau : clique pour garder seulement ceux-là, tu peux en choisir plusieurs. Sans choix, tout s'affiche.</li>
-<li>La recherche : tape un lieu ou un club (par exemple « Metz »).</li>
-<li><b>Masquer les passées</b> cache les courses terminées, <b>Réinitialiser</b> remet tout à zéro.</li>
+<li>Le bouton <b>Filtres</b> ouvre un panneau : niveaux (plusieurs possibles), mois, masquer les passées, ou tes réponses seulement. Les filtres actifs restent affichés en pastilles que tu retires d'une croix.</li>
+<li>La loupe, en haut, ouvre la recherche : tape un lieu ou un club (par exemple « Metz »).</li>
+<li><b>Réinitialiser</b>, dans le panneau Filtres, remet tout à zéro.</li>
 </ul>
 <h3>Les couleurs</h3>
 <p><span class="tag" data-l="N1" style="--col:var(--n1)">N1</span><span class="tag" data-l="N2" style="--col:var(--n2)">N2</span><span class="tag" data-l="N3" style="--col:var(--n3)">N3</span><span class="tag" data-l="R" style="--col:var(--r)">Régional</span><span class="tag" data-l="C" style="--col:var(--c)">Championnat</span><span class="tag" data-l="O" style="--col:var(--o)">Open</span></p>
@@ -168,7 +234,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 <li><b>Répondre</b> quand les inscriptions sont ouvertes : « Je viens », « Je ne sais pas encore » ou « Je ne viens pas ». « Je ne sais pas encore » se change librement. Si tu as plusieurs catégories (K1 et C1), tu coches l'embarcation avant de répondre « Je viens » ; avec une seule catégorie, elle est choisie automatiquement. « Je viens » et « Je ne viens pas » demandent une confirmation, puis la réponse est verrouillée : pour la changer, utilise « Demander une modification ».</li>
 <li><b>Inscriptions fermées</b> : le bouton « Demander l'ouverture des inscriptions » prévient l'administrateur. Tu vois ensuite sa décision.</li>
 <li><b>Niveau ou catégorie non adaptés</b> : tu peux consulter la fiche, mais pas répondre, sauf autorisation de l'administrateur.</li>
-<li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». La case « Mes réponses seulement » ne garde que tes compétitions.</li>
+<li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». Le filtre « Mes réponses seulement » ne garde que tes compétitions, et l'onglet <b>Mes compétitions</b> regroupe ce qu'il te reste à répondre et tes réponses.</li>
 </ul>
 <div id="help-coach" hidden>
 <h3>Pour l'entraîneur</h3>
@@ -180,6 +246,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 </div>
 <div id="help-adm" hidden>
 <h3>Pour l'administrateur</h3>
+<p>Les outils d'administration sont dans le menu de ton compte (ton prénom, en haut à droite, ou « Plus » sur téléphone).</p>
 <ul>
 <li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum, rôle Adhérent ou Entraîneur), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
@@ -289,7 +356,7 @@ E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
 const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
 const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
 const today=new Date().toISOString().slice(0,10);
-const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:"",mine:false};
+const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:"",mine:false,sec:"cal"};
 const pad=n=>String(n).padStart(2,"0");
 let minM=E[0].s.slice(0,7),maxM=E[E.length-1].e.slice(0,7);
 const clampM=m=>m<minM?minM:m>maxM?maxM:m;
@@ -326,7 +393,20 @@ const dl=x=>{const a=new Date(x.s+"T12:00"),b=new Date(x.e+"T12:00"),mo=d=>d.toL
   if(x.s==x.e)return`${a.getDate()} ${mo(a)}`;
   return a.getMonth()==b.getMonth()?`${a.getDate()}–${b.getDate()} ${mo(a)}`:`${a.getDate()} ${mo(a)} → ${b.getDate()} ${mo(b)}`};
 const TL={N1:"N1",N2:"N2",N3:"N3",R:"Régional",C:"Championnat",O:"Open"};
-const card=(x,nx,side)=>`<article tabindex="0" data-id="${x.id||""}" data-r="${(myR(x.id)||{}).status||""}"${hov(x)} class="k ${side||"C"}${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><b>${dl(x)}</b><h3>${esc(x.l)}${nx?'<span class="nx">Prochaine</span>':""}</h3><p><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${esc(x.n)}<br>${esc(x.o)}</p>${pastille(x)}</article>`;
+const dparts=x=>{const a=new Date(x.s+"T12:00"),b=new Date(x.e+"T12:00"),mo=d=>d.toLocaleDateString("fr-FR",{month:"short"});
+  if(x.s==x.e)return[a.getDate(),mo(a)];
+  return a.getMonth()==b.getMonth()?[a.getDate()+"–"+b.getDate(),mo(a)]:[a.getDate()+"→"+b.getDate(),mo(a)+"→"+mo(b)]};
+const card=(x,nx)=>{const[n,m]=dparts(x);
+  return`<article tabindex="0" data-id="${x.id||""}" data-r="${(myR(x.id)||{}).status||""}"${hov(x)} class="k${x.e<today?" past":""}${nx?" next":""}" style="--col:${L[x.k][1]}"><div class="d"><b>${n}</b><i>${m}</i></div><div class="kb"><span class="tag" data-l="${x.k}">${TL[x.k]}</span>${nx?'<span class="nx">Prochaine</span>':""}<h3>${esc(x.l)}</h3><p>${esc(x.n)}</p><p>${esc(x.o)}</p><div class="stl">${pastille(x)}</div></div></article>`};
+const wlabel=g=>{const s0=g.reduce((a,x)=>x.s<a?x.s:a,g[0].s),e0=g.reduce((a,x)=>x.e>a?x.e:a,g[0].e);return dparts({s:s0,e:e0}).join(" ")};
+function mineView(){
+  if(!me)return'<div class="empty"><p>Connecte-toi pour retrouver tes compétitions.</p><button class="chip" data-go="in">Se connecter</button></div>';
+  const up=E.filter(x=>x.e>=today),coach=me.role=="coach",st2=x=>(myR(x.id)||{}).status;
+  const todo=up.filter(x=>{const c=CL[x.id];return !myR(x.id)&&(coach||(c&&c.registration=="open"&&eligible(x,c)))});
+  const groups=coach?[["À indiquer",todo],["Je viens (accompagnateur)",up.filter(x=>st2(x)=="yes")],["Je ne viens pas",up.filter(x=>st2(x)=="no")]]
+    :[["À répondre",todo],["Je viens",up.filter(x=>st2(x)=="yes")],["Je ne sais pas encore",up.filter(x=>st2(x)=="maybe")],["Je ne viens pas",up.filter(x=>st2(x)=="no")]];
+  return groups.filter(g=>g[1].length).map(([t,a])=>`<h2>${t}<span>${a.length}</span></h2><div class="g">${a.map(x=>card(x)).join("")}</div>`).join("")||'<p class="empty">Rien à afficher pour l\'instant.</p>';
+}
 const dash=r=>{
   const mine=me?E.find(x=>x.e>=today&&(myR(x.id)||{}).status=="yes"):null;
   const nx=mine||r.find(x=>x.e>=today);if(!nx)return"";
@@ -368,24 +448,27 @@ const yearView=(y,r,M)=>{
 function render(){
   if(!me)st.mine=false;
   $("mine-w").style.display=me?"flex":"none";$("mine").checked=st.mine;
+  const sec=st.sec=="cal";
+  document.querySelectorAll("[data-sec]").forEach(b=>b.setAttribute("aria-current",b.dataset.sec==st.sec?"page":"false"));
   const q=norm(st.q.trim()),cal=st.v!="l";
   const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!st.mine||myR(x.id))&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
   document.querySelectorAll("#chips .chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
   document.querySelectorAll("#views button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
-  $("m").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
-  const y=st.cm.slice(0,4);let html,n;
-  if(st.v=="l"){
-    const nextId=res.find(x=>x.e>=today);let cur="",i=0;html="";
+  $("sb").hidden=!sec;$("m-w").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
+  if(st.q)$("sr").hidden=false;
+  const y=st.cm.slice(0,4);let html="",n=0,dh="";
+  if(!sec){html=mineView()}
+  else if(st.v=="l"){
+    const nextId=res.find(x=>x.e>=today);let cur="";
     const wk=x=>{const t=new Date(x.s+"T12:00");t.setDate(t.getDate()-(t.getDay()+6)%7);return t.toISOString().slice(0,10)};
     for(let a=0;a<res.length;){
       let b=a+1;while(b<res.length&&wk(res[b])==wk(res[a]))b++;
       const g=res.slice(a,b),mo=g[0].s.slice(0,7);
       if(mo!=cur){cur=mo;html+=`<h2>${mois(mo+"-01")}<span>${res.filter(z=>z.s.startsWith(mo)).length}</span></h2>`}
-      const side=i++%2==0?"L":"R",c=`<div class="cg ${side}">${g.map(x=>card(x,x===nextId)).join("")}</div>`;
-      html+=`<div class="r">${side=="L"?c:""}<div class="m"><i></i><i></i></div>${side=="R"?c:""}</div>`;
+      html+=`<div class="wk">${wlabel(g)}</div><div class="g">${g.map(x=>card(x,x===nextId)).join("")}</div>`;
       a=b;
     }
-    html=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';n=res.length;
+    html=html||'<p class="empty">Aucune compétition ne correspond. Essayez d\'enlever un filtre.</p>';n=res.length;dh=dash(res);
   }else if(st.v=="m"){
     html=monthView(st.cm,byDay(res));n=res.filter(x=>x.s.slice(0,7)<=st.cm&&x.e.slice(0,7)>=st.cm).length;
     $("lab").textContent=mois(st.cm+"-01");
@@ -395,17 +478,26 @@ function render(){
     $("lab").textContent=y;
     $("prev").disabled=+y<=+minM.slice(0,4);$("next").disabled=+y>=+maxM.slice(0,4);
   }
-  $("dash").innerHTML=st.v=="l"?dash(res):"";
+  const af=[];st.k.forEach(k=>af.push(["k:"+k,TL[k]]));
+  if(st.m&&!cal)af.push(["m",mois(st.m+"-01")]);if(st.fut)af.push(["f","Passées masquées"]);if(st.mine)af.push(["mine","Mes réponses"]);if(st.q)af.push(["q","« "+st.q+" »"]);
+  $("af").innerHTML=af.map(([k,t])=>`<button class="ch" data-rm="${esc(k)}" aria-label="Retirer le filtre ${esc(t)}">${esc(t)} <span aria-hidden="true">×</span></button>`).join("");
+  $("fn").textContent=af.length;$("fn").hidden=!af.length;
+  $("dash").innerHTML=dh;$("mainx").classList.toggle("nodash",!dh);
   $("list").innerHTML=html;
-  $("count").textContent=n+" compétition"+(n>1?"s":"");
-  hashSave();
+  $("count").textContent=n+" compétition"+(n>1?"s":"");$("fl-ok").textContent="Voir "+n+" compétition"+(n>1?"s":"");
+  fixSB();hashSave();
 }
+function fixSB(){const sb=$("sb");document.documentElement.style.setProperty("--sbh",(!sb.hidden&&getComputedStyle(sb).position=="sticky"?sb.offsetHeight:0)+"px")}
+window.addEventListener("resize",fixSB);
 const go=k=>{st.cm=clampM(shift(st.cm,st.v=="y"?12*k:k));st.sel="";render()};
 $("chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const k=b.dataset.l;st.k.has(k)?st.k.delete(k):st.k.add(k);render()};
 $("views").onclick=e=>{const b=e.target.closest("[data-v]");if(!b)return;st.v=b.dataset.v;st.sel="";render()};
 $("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);
-$("tod").onclick=()=>{st.cm=clampM(today.slice(0,7));st.sel=st.v=="m"&&today.startsWith(st.cm)?today:"";render()};
+$("tod").onclick=()=>{
+  if(st.v=="l"){const a=document.querySelector("article.next")||document.querySelector("#list article");if(a)a.scrollIntoView({block:"center",behavior:"smooth"});return}
+  st.cm=clampM(today.slice(0,7));st.sel=st.v=="m"&&today.startsWith(st.cm)?today:"";render()};
 $("list").onclick=e=>{
+  if(e.target.closest("[data-go]")){$("login").showModal();return}
   const b=e.target.closest("[data-d],[data-m]");if(!b)return;
   if(b.dataset.m){st.v="m";st.cm=b.dataset.m;st.sel=""}
   else{const d=b.dataset.d;st.cm=d.slice(0,7);st.v="m";st.sel=d}
@@ -581,7 +673,7 @@ const adminForm=(x,c)=>`<h3>Espace administrateur</h3><form id="fa" data-id="${x
 function openFiche(id){
   const x=E.find(z=>z.id===id);if(!x)return;
   const c=CL[id],adm=me&&me.role=="admin";
-  let h=`<h2>${esc(x.n)}</h2><p><span class="tag" data-l="${x.k}" style="--col:${L[x.k][1]}">${TL[x.k]}</span><b>${dl(x)}</b> · ${esc(x.l)}</p><p>${esc(x.o)}</p>`;
+  let h=`<button class="back" type="button" data-close>‹ Retour au calendrier</button><h2>${esc(x.n)}</h2><p><span class="tag" data-l="${x.k}" style="--col:${L[x.k][1]}">${TL[x.k]}</span><b>${dl(x)}</b> · ${esc(x.l)}</p><p>${esc(x.o)}</p>`;
   if(!me)h+='<p>Connecte-toi en tant que membre pour voir les informations du club.</p>';
   else if(c){
     h+=`<h3>Participation du club</h3><p>${c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span> ':""}Inscriptions : <b>${REG[c.registration]}</b></p>`;
@@ -628,10 +720,13 @@ const slug=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().re
 const mail=(f,l)=>slug(f)+"."+slug(l)+"@"+ID_DOM;
 const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
 function drawAcct(){
-  if(!sb){$("acct").innerHTML="";return}
-  $("acct").innerHTML=me
-    ?`<span class="chip" style="cursor:default">${esc(me.first_name)} ${esc(me.last_name)}${me.role=="admin"?" · admin":me.role=="coach"?" · entraîneur":""}</span>${me.role=="admin"?'<button class="chip" id="adm">Membres</button><button class="chip" id="nc">Nouvelle compétition</button><button class="chip" id="nt">Notifications'+(NT.some(n=>!n.read)?" ("+NT.filter(n=>!n.read).length+")":"")+"</button>":""}<button class="link" id="out">Déconnexion</button>`
-    :'<span class="guest">Invité</span><button class="chip" id="in">Se connecter</button>';
+  if(!sb){$("acct").innerHTML="";$("menu-l").innerHTML="";return}
+  const un=NT.filter(n=>!n.read).length,adm=me&&me.role=="admin",R={admin:"Administrateur",coach:"Entraîneur",member:"Adhérent"};
+  $("acct").innerHTML=me?`<button class="me" id="acct-b" aria-haspopup="dialog">${esc(me.first_name)}${adm&&un?` <span class="bdg">${un}</span>`:""}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`:'<button class="chip" id="in">Se connecter</button>';
+  $("menu-l").innerHTML=(me?`<div class="mh0"><b>${esc(me.first_name)} ${esc(me.last_name)}</b><small>${R[me.role]||""}</small></div>`:'<div class="mh0"><b>Invité</b><small>Calendrier public uniquement</small></div>')
+    +(adm?`<button id="adm">Membres</button><button id="nc">Nouvelle compétition</button><button id="nt">Notifications${un?` <span class="bdg">${un}</span>`:""}</button>`:"")
+    +'<button id="mn-help">Comment ça marche</button>'
+    +(me?'<button id="out" class="dg">Déconnexion</button>':'<button id="in2">Se connecter</button>');
 }
 async function loadMe(s){
   me=null;
@@ -662,12 +757,15 @@ ${p.role=="coach"?"":CATS.map(b=>`<div class="mc" data-b="${b}"><label><input ty
 }
 if(sb){
   sb.auth.onAuthStateChange((ev,s)=>{setTimeout(()=>loadMe(s),0)});
-  $("acct").onclick=e=>{const id=e.target.id;
-    if(id=="in")$("login").showModal();
+  const doAct=id=>{
+    if(id=="in"||id=="in2")$("login").showModal();
     else if(id=="out")sb.auth.signOut();
     else if(id=="adm"){$("adm-d").showModal();admList()}
     else if(id=="nc"){$("fiche-c").innerHTML=compForm(null)+'<button class="x" type="button" data-close>Fermer</button>';$("fiche").showModal()}
-    else if(id=="nt"){ntList();$("notif").showModal()}};
+    else if(id=="nt"){ntList();$("notif").showModal()}
+    else if(id=="mn-help")$("help-btn").click()};
+  $("acct").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="acct-b")$("menu").showModal();else doAct(b.id)};
+  $("menu-l").onclick=e=>{const b=e.target.closest("button");if(!b)return;$("menu").close();doAct(b.id)};
   $("lf").onsubmit=async e=>{e.preventDefault();$("lf-e").textContent="";
     const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
     if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
@@ -700,6 +798,14 @@ if(sb){
 }else drawAcct();
 $("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help-coach").hidden=!(me&&(me.role=="coach"||me.role=="admin"));$("help").showModal()};
 document.querySelectorAll("dialog").forEach(d=>d.onclick=e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()});
+const setSec=v=>{st.sec=v;st.sel="";render();window.scrollTo({top:0})};
+$("secs").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec)};
+$("bn").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec);else if(e.target.closest("#more-b"))$("menu").showModal()};
+$("srch-b").onclick=()=>{const h=$("sr").hidden;$("sr").hidden=!h;$("srch-b").setAttribute("aria-expanded",String(h));if(h)$("q").focus()};
+$("fb").onclick=()=>$("filters").showModal();
+$("af").onclick=e=>{const b=e.target.closest("[data-rm]");if(!b)return;const k=b.dataset.rm;
+  if(k.startsWith("k:"))st.k.delete(k.slice(2));else if(k=="m"){st.m="";$("m").value=""}else if(k=="f"){st.fut=false;$("fut").checked=false}else if(k=="mine")st.mine=false;else if(k=="q"){st.q="";$("q").value=""}
+  render()};
 hashLoad();render();
 </script>
 </body>
