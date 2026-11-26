@@ -52,6 +52,7 @@ module.exports = async (req, res) => {
       get(admin.from("recap_log").select("sent_at").eq("competition_id", id).order("sent_at", { ascending: false }).limit(1)),
     ]);
     const P = Object.fromEntries(profiles.map((p) => [p.id, p])), E = Object.fromEntries(contacts.map((c) => [c.member_id, c.email]));
+    const emailOf = (id) => E[id] || E[(P[id] || {}).guardian_id];   // un profil rattaché reçoit via son compte principal
     const boats = (r) => (r.boats && r.boats.length ? " – " + r.boats.join(" + ") : "");
     const label = (r) => `${full(P[r.member_id] || { first_name: "Un membre", last_name: "" })}${boats(r)}`;
     const yes = resp.filter((r) => r.status === "yes"), maybe = resp.filter((r) => r.status === "maybe"), no = resp.filter((r) => r.status === "no");
@@ -66,11 +67,11 @@ module.exports = async (req, res) => {
     const adminMail = E[u.user.id];
     const recapTo = [...new Set([adminMail, ...coaches.map((c) => E[c.id])].filter(Boolean))];
     const coachTo = [...new Set(coaches.map((c) => E[c.id]).filter(Boolean))];
-    const participants = yes.filter((r) => E[r.member_id]);
+    const participants = yes.filter((r) => emailOf(r.member_id));
     const missing = [];
     if (!adminMail) missing.push(`${full(P[u.user.id] || {first_name:"Toi",last_name:""})} (toi, pour recevoir le récap)`);
     coaches.filter((c) => !E[c.id]).forEach((c) => missing.push(`${full(c)} (entraîneur)`));
-    yes.filter((r) => !E[r.member_id]).forEach((r) => missing.push(full(P[r.member_id] || { first_name: "Un membre", last_name: "" })));
+    yes.filter((r) => !emailOf(r.member_id)).forEach((r) => missing.push(full(P[r.member_id] || { first_name: "Un membre", last_name: "" })));
     const last = logs && logs[0] ? logs[0].sent_at : null;
     const smtpOk = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
 
@@ -96,8 +97,11 @@ module.exports = async (req, res) => {
     coachTo.forEach((to) => out.push({ to, kind: "coach", subject: `À inscrire – ${comp.name} (${yes.length} personne${yes.length > 1 ? "s" : ""})`, ...todo }));
     participants.forEach((r) => {
       const p = P[r.member_id];
-      const m = mail(`Bonjour ${p.first_name}, ton inscription${r.boats && r.boats.length ? " en " + r.boats.join(" + ") : ""} à ${head} a bien été prise en compte. Elle sera effectuée prochainement par ${coachName}.`, [], "Tu n'as rien d'autre à faire. À bientôt sur l'eau !");
-      out.push({ to: E[r.member_id], kind: "participant", subject: `Ton inscription – ${comp.name}`, ...m });
+      const g = p.guardian_id ? P[p.guardian_id] : null, bt = r.boats && r.boats.length ? " en " + r.boats.join(" + ") : "";
+      const m = g
+        ? mail(`Bonjour ${g.first_name}, l'inscription de ${p.first_name}${bt} à ${head} a bien été prise en compte. Elle sera effectuée prochainement par ${coachName}.`, [], "Vous n'avez rien d'autre à faire. À bientôt sur l'eau !")
+        : mail(`Bonjour ${p.first_name}, ton inscription${bt} à ${head} a bien été prise en compte. Elle sera effectuée prochainement par ${coachName}.`, [], "Tu n'as rien d'autre à faire. À bientôt sur l'eau !");
+      out.push({ to: emailOf(r.member_id), kind: "participant", subject: g ? `Inscription de ${p.first_name} – ${comp.name}` : `Ton inscription – ${comp.name}`, ...m });
     });
 
     // 5. Envoi (3 à la fois)
