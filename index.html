@@ -196,7 +196,7 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <div class="sb" id="sb"><div class="wrap sbi">
 <div class="seg" id="views" role="group" aria-label="Affichage"><button data-v="l">Liste</button><button data-v="m">Mois</button><button data-v="y">Année</button></div>
 <button class="fb" id="fb" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtres <span class="bdg" id="fn" hidden></span></button>
-<div class="row" id="af"></div>
+<div class="row" id="afl"></div>
 <div class="row" id="nav"><button class="chip" id="prev" aria-label="Précédent">‹</button><strong id="lab" aria-live="polite"></strong><button class="chip" id="next" aria-label="Suivant">›</button></div>
 <button class="fb" id="tod">Aujourd'hui</button>
 <span id="count" aria-live="polite"></span>
@@ -506,7 +506,7 @@ function render(){
   }
   const af=[];st.k.forEach(k=>af.push(["k:"+k,TL[k]]));
   if(st.m&&!cal)af.push(["m",mois(st.m+"-01")]);if(st.fut)af.push(["f","Passées masquées"]);if(st.mine)af.push(["mine","Mes réponses"]);if(st.q)af.push(["q","« "+st.q+" »"]);
-  $("af").innerHTML=af.map(([k,t])=>`<button class="ch" data-rm="${esc(k)}" aria-label="Retirer le filtre ${esc(t)}">${esc(t)} <span aria-hidden="true">×</span></button>`).join("");
+  $("afl").innerHTML=af.map(([k,t])=>`<button class="ch" data-rm="${esc(k)}" aria-label="Retirer le filtre ${esc(t)}">${esc(t)} <span aria-hidden="true">×</span></button>`).join("");
   $("fn").textContent=af.length;$("fn").hidden=!af.length;
   $("dash").innerHTML=dh;$("mainx").classList.toggle("nodash",!dh);
   $("list").innerHTML=html;
@@ -893,7 +893,7 @@ $("secs").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.datas
 $("bn").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec);else if(e.target.closest("#more-b"))$("menu").showModal()};
 $("srch-b").onclick=()=>{const h=$("sr").hidden;$("sr").hidden=!h;$("srch-b").setAttribute("aria-expanded",String(h));if(h)$("q").focus()};
 $("fb").onclick=()=>$("filters").showModal();
-$("af").onclick=e=>{const b=e.target.closest("[data-rm]");if(!b)return;const k=b.dataset.rm;
+$("afl").onclick=e=>{const b=e.target.closest("[data-rm]");if(!b)return;const k=b.dataset.rm;
   if(k.startsWith("k:"))st.k.delete(k.slice(2));else if(k=="m"){st.m="";$("m").value=""}else if(k=="f"){st.fut=false;$("fut").checked=false}else if(k=="mine")st.mine=false;else if(k=="q"){st.q="";$("q").value=""}
   render()};
 hashLoad();render();
