@@ -96,6 +96,14 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .day.yes{box-shadow:inset 0 0 0 3px var(--accent)}.dc.yes{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
 .em{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:500 14px "DM Sans",sans-serif;margin:6px 0;background:#fff;color:var(--ink)}
 #jf{margin:10px 0}#jf input{width:auto;flex:1 1 150px;margin:0}
+.nl{max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:14px;margin:6px 0 12px;background:#fff}
+.nl button{display:flex;gap:6px;width:100%;min-height:48px;align-items:center;border:0;border-bottom:1px solid #EEF2FB;background:none;font:500 16px "DM Sans",sans-serif;color:var(--ink);padding:0 14px;text-align:left;cursor:pointer}
+.nl button:last-child{border-bottom:0}.nl button:hover,.nl button:focus-visible{background:var(--bg)}
+.pk{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:14px;padding:10px 14px;margin:6px 0 12px;font:600 16px "DM Sans",sans-serif}
+.mu{color:var(--mute);font-size:13px;padding:6px 2px}.mu2{color:var(--mute);font-size:12px}
+.nt-b{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;cursor:pointer;padding:0;color:inherit}
+.nt small{display:block;color:var(--mute);font-weight:400;font-size:12px;margin-top:2px}
+.who{margin:6px 0 10px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 [hidden]{display:none!important}
@@ -229,17 +237,19 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <p><span class="tag" data-l="N1" style="--col:var(--n1)">N1</span><span class="tag" data-l="N2" style="--col:var(--n2)">N2</span><span class="tag" data-l="N3" style="--col:var(--n3)">N3</span><span class="tag" data-l="R" style="--col:var(--r)">Régional</span><span class="tag" data-l="C" style="--col:var(--c)">Championnat</span><span class="tag" data-l="O" style="--col:var(--o)">Open</span></p>
 <h3>Espace membre CK Lagny</h3>
 <ul>
-<li><b>Se connecter</b> : bouton en haut de la page, avec ton prénom, ton nom et le code personnel donné par l'administrateur. Sans connexion, tu es « Invité » et tu vois seulement le calendrier public.</li>
+<li><b>Se connecter</b> : bouton en haut de la page. Choisis ton nom dans la liste (tu peux en rechercher un), puis saisis ton code personnel donné par l'administrateur. Sans connexion, tu es « Invité » et tu vois seulement le calendrier public.</li>
 <li><b>Ouvrir une compétition</b> : clique dessus pour voir sa fiche (infos pratiques, liens, liste de départ) et les personnes présentes (compétiteurs, accompagnateurs, juges).</li>
 <li><b>Répondre</b> quand les inscriptions sont ouvertes : « Je viens », « Je ne sais pas encore » ou « Je ne viens pas ». « Je ne sais pas encore » se change librement. Si tu as plusieurs catégories (K1 et C1), tu coches l'embarcation avant de répondre « Je viens » ; avec une seule catégorie, elle est choisie automatiquement. « Je viens » et « Je ne viens pas » demandent une confirmation, puis la réponse est verrouillée : pour la changer, utilise « Demander une modification ».</li>
 <li><b>Inscriptions fermées</b> : le bouton « Demander l'ouverture des inscriptions » prévient l'administrateur. Tu vois ensuite sa décision.</li>
 <li><b>Niveau ou catégorie non adaptés</b> : tu peux consulter la fiche, mais pas répondre, sauf autorisation de l'administrateur.</li>
 <li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». Le filtre « Mes réponses seulement » ne garde que tes compétitions, et l'onglet <b>Mes compétitions</b> regroupe ce qu'il te reste à répondre et tes réponses.</li>
+<li><b>Notifications</b> : dans le menu de ton compte, juste au-dessus de « Déconnexion ». Tu es prévenu d'une nouvelle compétition, de l'ouverture des inscriptions, d'une modification ou d'une nouvelle information. Clique sur une notification pour ouvrir la compétition, ou sur « Marquer comme lue ».</li>
+<li><b>Mes profils</b> : pour répondre à la place d'une autre personne (par exemple ton enfant), ajoute son profil dans le menu de ton compte. Dans la fiche d'une compétition, choisis ensuite « Moi » ou son prénom avant de répondre. Chaque personne a sa propre réponse. L'administrateur règle les embarcations et les niveaux de son profil.</li>
 </ul>
 <div id="help-coach" hidden>
 <h3>Pour l'entraîneur</h3>
 <ul>
-<li><b>Ta venue</b> : dans la fiche, indique « Je viens » ou « Je ne viens pas » en tant qu'<b>accompagnateur</b>. Aucune embarcation ni aucun niveau à choisir, et tu peux changer quand tu veux.</li>
+<li><b>Ta réponse</b> : dans la fiche, réponds « Je viens », « Je ne sais pas encore » ou « Je ne viens pas » en tant qu'<b>accompagnateur</b>, seulement quand les réponses sont ouvertes pour la compétition. Aucune embarcation ni aucun niveau à choisir.</li>
 <li><b>Les juges</b> : en bas de la liste « Personnes présentes », saisis un prénom et un nom puis « Ajouter un juge ». Ils n'ont pas besoin de compte. Le bouton « Retirer » les enlève.</li>
 <li><b>Personnes présentes</b> : la fiche liste les compétiteurs (avec leur embarcation), les accompagnateurs et les juges, et donne le total.</li>
 </ul>
@@ -252,7 +262,7 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
 <li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
 <li><b>Récap</b> : quand les inscriptions d'une compétition sont « Fermées », le bouton « Envoyer le récap et prévenir les participants » envoie le récap, la liste à inscrire à l'entraîneur et une confirmation à chaque compétiteur. Renseigne d'abord les adresses e-mail dans « Membres ».</li>
-<li><b>Notifications</b> : elles signalent les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
+<li><b>Activité des membres</b> : elle signale les réponses et les demandes. Dans la fiche, accepte ou refuse les demandes, déverrouille une réponse, ou autorise exceptionnellement un membre.</li>
 </ul>
 </div>
 <h3>Bon à savoir</h3>
@@ -264,12 +274,23 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <button class="x" data-close>Compris</button>
 </div></dialog>
 <dialog id="fiche" aria-label="Fiche de la compétition"><div class="hp" id="fiche-c"></div></dialog>
-<dialog id="notif" aria-labelledby="nt-t"><div class="hp"><h2 id="nt-t">Notifications</h2><div id="notif-l"></div><button class="link" type="button" id="notif-all">Tout marquer comme lu</button><button class="x" type="button" data-close>Fermer</button></div></dialog>
+<dialog id="notif" aria-labelledby="nt-t"><div class="hp"><h2 id="nt-t">Activité des membres</h2><div id="notif-l"></div><button class="link" type="button" id="notif-all">Tout marquer comme lu</button><button class="x" type="button" data-close>Fermer</button></div></dialog>
+<dialog id="unotif" aria-labelledby="un-t"><div class="hp"><h2 id="un-t">Notifications</h2><div id="un-l"></div><button class="link" type="button" id="un-all">Tout marquer comme lu</button><button class="x" type="button" data-close>Fermer</button></div></dialog>
+<dialog id="profs" aria-labelledby="pf-t"><div class="hp">
+<h2 id="pf-t">Mes profils</h2>
+<p>Ajoute une personne que tu gères (par exemple ton enfant) pour répondre aux compétitions à sa place, sans te déconnecter. L'administrateur règle ensuite ses embarcations et ses niveaux.</p>
+<div class="er" id="pf-e" role="alert"></div>
+<div id="pf-l"></div>
+<h3>Ajouter une personne</h3>
+<form id="pf-f"><label class="f" for="pf-fn">Prénom</label><input id="pf-fn" type="text" required><label class="f" for="pf-ln">Nom</label><input id="pf-ln" type="text" required><button class="x" type="submit">Ajouter ce profil</button></form>
+<button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
+</div></dialog>
 <dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
 <h2 id="lg-t">Connexion membre</h2>
-<p>Réservé aux adhérents de CK Lagny. Sans compte, tu consultes le calendrier public en invité.</p>
-<label class="f" for="lf-f">Prénom</label><input id="lf-f" type="text" autocomplete="given-name" required>
-<label class="f" for="lf-l">Nom</label><input id="lf-l" type="text" autocomplete="family-name" required>
+<p>Choisis ton nom dans la liste, puis saisis ton code personnel. Sans compte, tu consultes le calendrier public en invité.</p>
+<div id="lf-pick" hidden><div class="pk"><b id="lf-pn"></b><button type="button" class="link" id="lf-chg">Changer</button></div></div>
+<div id="lf-sel"><label class="f" for="lf-s">Ton nom</label><input id="lf-s" type="search" placeholder="Rechercher ton nom…" autocomplete="off"><div id="lf-list" class="nl" role="listbox" aria-label="Adhérents"></div></div>
+<div id="lf-man" hidden><label class="f" for="lf-f">Prénom</label><input id="lf-f" type="text" autocomplete="given-name"><label class="f" for="lf-l">Nom</label><input id="lf-l" type="text" autocomplete="family-name"></div>
 <label class="f" for="lf-c">Code personnel</label><input id="lf-c" type="password" autocomplete="current-password" required>
 <div class="er" id="lf-e" role="alert"></div>
 <button class="x" type="submit">Se connecter</button>
@@ -356,7 +377,7 @@ E.forEach(x=>x.h=norm(x.n+" "+x.l+" "+x.o));
 const mois=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
 const fm=(d,o)=>new Date(d+"T12:00").toLocaleDateString("fr-FR",o);
 const today=new Date().toISOString().slice(0,10);
-const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:"",mine:false,sec:"cal"};
+const st={k:new Set(),q:"",m:"",fut:false,v:"l",cm:"",sel:"",mine:false,sec:"cal",who:""};
 const pad=n=>String(n).padStart(2,"0");
 let minM=E[0].s.slice(0,7),maxM=E[E.length-1].e.slice(0,7);
 const clampM=m=>m<minM?minM:m>maxM?maxM:m;
@@ -401,11 +422,16 @@ const card=(x,nx)=>{const[n,m]=dparts(x);
 const wlabel=g=>{const s0=g.reduce((a,x)=>x.s<a?x.s:a,g[0].s),e0=g.reduce((a,x)=>x.e>a?x.e:a,g[0].e);return dparts({s:s0,e:e0}).join(" ")};
 function mineView(){
   if(!me)return'<div class="empty"><p>Connecte-toi pour retrouver tes compétitions.</p><button class="chip" data-go="in">Se connecter</button></div>';
-  const up=E.filter(x=>x.e>=today),coach=me.role=="coach",st2=x=>(myR(x.id)||{}).status;
-  const todo=up.filter(x=>{const c=CL[x.id];return !myR(x.id)&&(coach||(c&&c.registration=="open"&&eligible(x,c)))});
-  const groups=coach?[["À indiquer",todo],["Je viens (accompagnateur)",up.filter(x=>st2(x)=="yes")],["Je ne viens pas",up.filter(x=>st2(x)=="no")]]
-    :[["À répondre",todo],["Je viens",up.filter(x=>st2(x)=="yes")],["Je ne sais pas encore",up.filter(x=>st2(x)=="maybe")],["Je ne viens pas",up.filter(x=>st2(x)=="no")]];
-  return groups.filter(g=>g[1].length).map(([t,a])=>`<h2>${t}<span>${a.length}</span></h2><div class="g">${a.map(x=>card(x)).join("")}</div>`).join("")||'<p class="empty">Rien à afficher pour l\'instant.</p>';
+  const up=E.filter(x=>x.e>=today),coach=me.role=="coach",ac=actors(),multi=ac.length>1;let html="";
+  ac.forEach(a=>{
+    const rf=x=>a.id==me.id?myR(x.id):respOf(x.id,a.id),sx=x=>(rf(x)||{}).status;
+    const todo=up.filter(x=>{const c=CL[x.id];return !rf(x)&&c&&c.registration=="open"&&(coach||eligible(x,c,a))});
+    const groups=coach?[["À indiquer",todo],["Je viens (accompagnateur)",up.filter(x=>sx(x)=="yes")],["Je ne sais pas encore",up.filter(x=>sx(x)=="maybe")],["Je ne viens pas",up.filter(x=>sx(x)=="no")]]
+      :[["À répondre",todo],["Je viens",up.filter(x=>sx(x)=="yes")],["Je ne sais pas encore",up.filter(x=>sx(x)=="maybe")],["Je ne viens pas",up.filter(x=>sx(x)=="no")]];
+    const pre=multi?esc(a.id==me.id?"Moi":a.first_name)+" — ":"";
+    html+=groups.filter(g=>g[1].length).map(([t,arr])=>`<h2>${pre}${t}<span>${arr.length}</span></h2><div class="g">${arr.map(x=>card(x)).join("")}</div>`).join("");
+  });
+  return html||'<p class="empty">Rien à afficher pour l\'instant.</p>';
 }
 const dash=r=>{
   const mine=me?E.find(x=>x.e>=today&&(myR(x.id)||{}).status=="yes"):null;
@@ -451,7 +477,7 @@ function render(){
   const sec=st.sec=="cal";
   document.querySelectorAll("[data-sec]").forEach(b=>b.setAttribute("aria-current",b.dataset.sec==st.sec?"page":"false"));
   const q=norm(st.q.trim()),cal=st.v!="l";
-  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!st.mine||myR(x.id))&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
+  const res=E.filter(x=>(!st.k.size||st.k.has(x.k))&&(cal||!st.m||x.s.startsWith(st.m))&&(!st.fut||x.e>=today)&&(!st.mine||mineAny(x.id))&&(!q||q.split(/\s+/).every(w=>x.h.includes(w))));
   document.querySelectorAll("#chips .chip").forEach(b=>b.setAttribute("aria-pressed",st.k.has(b.dataset.l)));
   document.querySelectorAll("#views button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==st.v));
   $("sb").hidden=!sec;$("m-w").style.display=cal?"none":"";$("nav").style.display=cal?"":"none";
@@ -497,7 +523,7 @@ $("tod").onclick=()=>{
   if(st.v=="l"){const a=document.querySelector("article.next")||document.querySelector("#list article");if(a)a.scrollIntoView({block:"center",behavior:"smooth"});return}
   st.cm=clampM(today.slice(0,7));st.sel=st.v=="m"&&today.startsWith(st.cm)?today:"";render()};
 $("list").onclick=e=>{
-  if(e.target.closest("[data-go]")){$("login").showModal();return}
+  if(e.target.closest("[data-go]")){showLogin();return}
   const b=e.target.closest("[data-d],[data-m]");if(!b)return;
   if(b.dataset.m){st.v="m";st.cm=b.dataset.m;st.sel=""}
   else{const d=b.dataset.d;st.cm=d.slice(0,7);st.v="m";st.sel=d}
@@ -508,13 +534,22 @@ $("m").onchange=e=>{st.m=e.target.value;render()};
 $("fut").onchange=e=>{st.fut=e.target.checked;render()};
 $("rst").onclick=()=>{st.k.clear();st.q="";st.m="";st.fut=false;$("q").value="";$("m").value="";$("fut").checked=false;st.mine=false;render()};
 $("mine").onchange=e=>{st.mine=e.target.checked;render()};
-let CL={},RS={},PF={},RQ=[],CQ=[],EX=[],NT=[],CP={},JG={};
+let CL={},RS={},PF={},RQ=[],CQ=[],EX=[],NT=[],CP={},JG={},UN=[];
 const ST={yes:"Je viens",maybe:"Je ne sais pas encore",no:"Je ne viens pas"};
+const CST={yes:"Accompagnateur",maybe:"Hésite",no:"Ne vient pas"};
 const myR=id=>me&&me.role=="coach"?(CP[id]||[]).find(r=>r.member_id==me.id):(RS[id]||[]).find(r=>me&&r.member_id==me.id);
-const levelBoats=x=>(x.cat||[]).filter(b=>((me.boat_levels||{})[b]||[]).includes(x.k));
-const eligible=(x,c)=>me&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==me.id)||levelBoats(x).length>0);
-const pastille=x=>{const c=CL[x.id];if(!c)return"";const r=myR(x.id);
-  return(c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"")+(r?`<span class="cl my ${r.status}">${me.role=="coach"?(r.status=="yes"?"Accompagnateur":"Ne vient pas"):ST[r.status]}${r.status=="yes"&&r.boats&&r.boats.length?" "+r.boats.join("+"):""}${r.locked?" ✓":""}</span>`:"")};
+const levelBoats=(x,a=me)=>(x.cat||[]).filter(b=>((a.boat_levels||{})[b]||[]).includes(x.k));
+const eligible=(x,c,a=me)=>a&&c&&(EX.some(e=>e.competition_id==x.id&&e.member_id==a.id)||levelBoats(x,a).length>0);
+const respOf=(cid,mid)=>(RS[cid]||[]).find(r=>r.member_id==mid);
+const actors=()=>me?(me.role=="coach"?[me]:[me,...Object.values(PF).filter(p=>p.guardian_id==me.id).sort((a,b)=>a.first_name.localeCompare(b.first_name))]):[];
+const actorProf=()=>actors().find(p=>p.id==st.who)||me;
+const mineAny=id=>me&&(me.role=="coach"?!!myR(id):actors().some(a=>respOf(id,a.id)));
+const pastille=x=>{const c=CL[x.id];if(!c)return"";
+  let h=c.club_considering?'<span class="cl">CK Lagny envisage d\'y participer</span>':"";
+  actors().forEach(a=>{const r=a.id==me.id?myR(x.id):respOf(x.id,a.id);if(!r)return;
+    const who=a.id==me.id?"":esc(a.first_name)+" · ",lab=me.role=="coach"&&a.id==me.id?CST[r.status]:ST[r.status];
+    h+=`<span class="cl my ${r.status}">${who}${lab}${r.status=="yes"&&r.boats&&r.boats.length?" "+r.boats.join("+"):""}${r.locked?" ✓":""}</span>`});
+  return h};
 const hov=x=>{if(!me||!CL[x.id])return"";const l=RS[x.id]||[];
   return' title="'+esc(["yes","maybe","no"].map(s=>{const g=l.filter(r=>r.status==s).map(r=>(PF[r.member_id]?PF[r.member_id].first_name+" "+PF[r.member_id].last_name:"Un membre")+(r.boats&&r.boats.length?" ("+r.boats.join("+")+")":""));return ST[s]+" ("+g.length+")"+(g.length?" : "+g.join(", "):"")}).concat(["Accompagnateurs ("+(CP[x.id]||[]).filter(r=>r.status=="yes").length+")","Juges ("+(JG[x.id]||[]).length+")"]).join("\n"))+'"'};
 async function loadData(){
@@ -523,15 +558,15 @@ async function loadData(){
   if(error||!data||!data.length)return;
   E=data.map(c=>({id:c.id,s:c.start_date,e:c.end_date,n:c.name,l:c.place,o:c.organizer||"",k:c.level,cat:c.categories||[],h:norm(c.name+" "+c.place+" "+(c.organizer||""))}));
   E.sort((a,b)=>a.s.localeCompare(b.s)||a.e.localeCompare(b.e));
-  CL={};RS={};PF={};RQ=[];CQ=[];EX=[];NT=[];CP={};JG={};
+  CL={};RS={};PF={};RQ=[];CQ=[];EX=[];NT=[];CP={};JG={};UN=[];
   if(me){
     const q=t=>sb.from(t).select("*");
-    const[a,b,c,d,f,g,k,l,h]=await Promise.all([q("competition_club"),q("responses"),q("profiles"),q("registration_requests"),q("change_requests"),q("exceptions"),q("companions"),q("judges"),
-      me.role=="admin"?sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(100):Promise.resolve({data:[]})]);
+    const[a,b,c,d,f,g,k,l,h,un]=await Promise.all([q("competition_club"),q("responses"),q("profiles"),q("registration_requests"),q("change_requests"),q("exceptions"),q("companions"),q("judges"),
+      me.role=="admin"?sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(100):Promise.resolve({data:[]}),sb.from("user_notifications").select("*").order("created_at",{ascending:false}).limit(50)]);
     (a.data||[]).forEach(r=>CL[r.competition_id]=r);
     (b.data||[]).forEach(r=>(RS[r.competition_id]=RS[r.competition_id]||[]).push(r));
     (c.data||[]).forEach(r=>PF[r.id]=r);
-    RQ=d.data||[];CQ=f.data||[];EX=g.data||[];NT=h.data||[];
+    RQ=d.data||[];CQ=f.data||[];EX=g.data||[];NT=h.data||[];UN=un.data||[];
     (k.data||[]).forEach(r=>(CP[r.competition_id]=CP[r.competition_id]||[]).push(r));
     (l.data||[]).forEach(r=>(JG[r.competition_id]=JG[r.competition_id]||[]).push(r));
   }
@@ -550,33 +585,37 @@ const compForm=x=>{const c=x||{n:"",s:"",e:"",l:"",o:"",k:"R",cat:["C1","K1"]};
 <p class="f">Catégories autorisées : ${CATS.map(t=>`<label><input type="checkbox" name="cat" value="${t}"${(c.cat||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}</p>
 <div class="er" id="fe-er" role="alert"></div><button class="x" type="submit">${x?"Enregistrer les modifications":"Créer la compétition"}</button>
 ${x?`<button class="link" type="button" data-act="c-del" data-id="${x.id}">Supprimer cette compétition</button>`:""}</form>`};
-const boatOpts=x=>{let o=levelBoats(x);if(!o.length)o=(x.cat||[]).filter(b=>(me.boat_levels||{})[b]);return o.length?o:(x.cat||[])};
-const boatHtml=(x,r)=>{const o=boatOpts(x);if(!o.length)return"";
+const boatOpts=(x,a=me)=>{let o=levelBoats(x,a);if(!o.length)o=(x.cat||[]).filter(b=>(a.boat_levels||{})[b]);return o.length?o:(x.cat||[])};
+const boatHtml=(x,r,a=me)=>{const o=boatOpts(x,a);if(!o.length)return"";
   return o.length==1?`<p>Embarcation : <b>${o[0]}</b></p>`
-    :`<p class="f">Embarcation : ${o.map(t=>`<label><input type="checkbox" id="bt-${t}"${r&&(r.boats||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}<br><small>Coche celle(s) pour laquelle tu t'inscris, avant de répondre « Je viens ».</small></p>`};
-const nm=id=>PF[id]?esc(PF[id].first_name+" "+PF[id].last_name):"Un membre";
+    :`<p class="f">Embarcation : ${o.map(t=>`<label><input type="checkbox" id="bt-${t}"${r&&(r.boats||[]).includes(t)?" checked":""}> ${t}</label>`).join(" ")}<br><small>Coche celle(s) pour laquelle ${a.id==me.id?"tu t'inscris":esc(a.first_name)+" s'inscrit"}, avant de répondre « Je viens ».</small></p>`};
+const nm=id=>{const p=PF[id];if(!p)return"Un membre";const g=p.guardian_id&&PF[p.guardian_id];
+  return esc(p.first_name+" "+p.last_name)+(g?` <small class="mu2">(profil de ${esc(g.first_name)})</small>`:"")};
 function partHtml(x,c){
   if(me.role=="coach"){
-    const m=(CP[x.id]||[]).find(r=>r.member_id==me.id);
-    return`<h3>Ma venue (accompagnateur)</h3><p>Statut : <b>Accompagnateur</b>${m?" · "+(m.status=="yes"?"Je viens":"Je ne viens pas"):" · pas encore de réponse"}</p><div class="row">`
-      +["yes","no"].map(s=>`<button class="chip" data-act="cp" data-s="${s}" data-id="${x.id}" style="--col:var(--accent)"${m&&m.status==s?' aria-pressed="true"':""}>${s=="yes"?"Je viens":"Je ne viens pas"}</button>`).join("")+"</div>";
+    const m=(CP[x.id]||[]).find(r=>r.member_id==me.id),h0="<h3>Ma réponse (accompagnateur)</h3>";
+    if(c.registration!="open")return h0+"<p>Les réponses ne sont pas ouvertes pour cette compétition."+(m?" Ta réponse enregistrée : <b>"+ST[m.status]+"</b>.":"")+"</p>";
+    return h0+`<p>Statut : <b>Accompagnateur</b>${m?" · "+ST[m.status]:" · pas encore de réponse"}</p><div class="row">`
+      +["yes","maybe","no"].map(s=>`<button class="chip" data-act="cp" data-s="${s}" data-id="${x.id}" style="--col:var(--accent)"${m&&m.status==s?' aria-pressed="true"':""}>${ST[s]}</button>`).join("")+"</div>";
   }
-  const r=myR(x.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==me.id);
-  const cq=CQ.filter(q=>q.competition_id==x.id&&q.member_id==me.id).sort((a,b)=>b.id-a.id)[0];
-  let h="<h3>Ma participation</h3>";
+  const a=actorProf(),self=a.id==me.id,nA=esc(a.first_name),ac=actors();
+  const r=self?myR(x.id):respOf(x.id,a.id),rq=RQ.find(q=>q.competition_id==x.id&&q.member_id==a.id);
+  const cq=CQ.filter(q=>q.competition_id==x.id&&q.member_id==a.id).sort((p,q)=>q.id-p.id)[0];
+  let h=`<h3>${self?"Ma participation":"Participation de "+nA}</h3>`;
+  if(ac.length>1)h+='<div class="row who" role="group" aria-label="Répondre pour">'+ac.map(p=>`<button class="chip" data-act="who" data-id="${x.id}" data-w="${p.id}" style="--col:var(--accent)"${p.id==a.id?' aria-pressed="true"':""}>${p.id==me.id?"Moi":esc(p.first_name)}</button>`).join("")+"</div>";
   if(c.registration=="open"){
-    if(!eligible(x,c))return h+"<p>Tu n'as pas le niveau ou la catégorie requis pour cette compétition. Tu peux consulter les informations et les réponses des autres membres.</p>";
+    if(!eligible(x,c,a))return h+(self?"<p>Tu n'as pas le niveau ou la catégorie requis pour cette compétition. Tu peux consulter les informations et les réponses des autres membres.</p>":`<p>${nA} n'a pas le niveau ou la catégorie requis pour cette compétition, ou l'administrateur n'a pas encore réglé ses niveaux.</p>`);
     if(r&&r.locked){
-      h+=`<p>Ta réponse : <b>${ST[r.status]}${r.boats&&r.boats.length?" en "+r.boats.join(" + "):""}</b> (confirmée).</p>`;
-      if(cq&&cq.status=="pending")h+="<p>Ta demande de modification est en attente de l'administrateur.</p>";
-      else{if(cq&&cq.status=="refused")h+="<p>Ta dernière demande de modification a été refusée.</p>";
+      h+=`<p>${self?"Ta réponse":"Réponse de "+nA} : <b>${ST[r.status]}${r.boats&&r.boats.length?" en "+r.boats.join(" + "):""}</b> (confirmée).</p>`;
+      if(cq&&cq.status=="pending")h+="<p>La demande de modification est en attente de l'administrateur.</p>";
+      else{if(cq&&cq.status=="refused")h+="<p>La dernière demande de modification a été refusée.</p>";
         h+=`<button class="chip" data-act="chg" data-id="${x.id}">Demander une modification</button>`}
       return h;
     }
-    return h+boatHtml(x,r)+`<p>${r?"Ta réponse : <b>"+ST[r.status]+"</b>":"Tu n'as pas encore répondu."}</p><div class="row">`
+    return h+boatHtml(x,r,a)+`<p>${r?(self?"Ta réponse":"Réponse de "+nA)+" : <b>"+ST[r.status]+"</b>":(self?"Tu n'as pas encore répondu.":nA+" n'a pas encore répondu.")}</p><div class="row">`
       +["yes","maybe","no"].map(s=>`<button class="chip" data-act="ans" data-s="${s}" data-id="${x.id}" style="--col:var(--accent)"${r&&r.status==s?' aria-pressed="true"':""}>${ST[s]}</button>`).join("")+"</div>";
   }
-  if(rq&&rq.status=="pending")return h+"<p>Ta demande d'ouverture des inscriptions a été envoyée à l'administrateur.</p>";
+  if(rq&&rq.status=="pending")return h+"<p>La demande d'ouverture des inscriptions a été envoyée à l'administrateur.</p>";
   if(rq)return h+`<p>Demande d'ouverture des inscriptions : <b>${rq.status=="accepted"?"acceptée":"refusée"}</b>.${rq.decision_note?" "+esc(rq.decision_note):""}</p>`;
   return h+`<p>Les inscriptions ne sont pas ouvertes.</p><button class="chip" data-act="req" data-id="${x.id}">Demander l'ouverture des inscriptions</button>`;
 }
@@ -591,9 +630,9 @@ function presenceHtml(x){
     +(staff?`<form id="jf" data-id="${x.id}" class="row"><input id="jf-f" type="text" placeholder="Prénom du juge" aria-label="Prénom du juge" required><input id="jf-l" type="text" placeholder="Nom du juge" aria-label="Nom du juge" required><button class="chip" type="submit">Ajouter un juge</button></form>`:"");
 }
 function listHtml(x){
-  const l=RS[x.id]||[],adm=me.role=="admin",g=s=>l.filter(r=>r.status==s);
-  return"<h3>Autres réponses des membres</h3>"+["maybe","no"].map(s=>`<p><b>${ST[s]}</b> (${g(s).length})${g(s).length?" : ":""}`
-    +g(s).map(r=>nm(r.member_id)+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")).join(", ")+"</p>").join("");
+  const l=RS[x.id]||[],cp=CP[x.id]||[],adm=me.role=="admin",g=s=>l.filter(r=>r.status==s),gc=s=>cp.filter(r=>r.status==s);
+  return"<h3>Autres réponses des membres</h3>"+["maybe","no"].map(s=>{const n=g(s).length+gc(s).length;
+    return`<p><b>${ST[s]}</b> (${n})${n?" : ":""}`+[...g(s).map(r=>nm(r.member_id)+(adm&&r.locked?` <button class="link" data-act="unl" data-id="${x.id}" data-m="${r.member_id}">Déverrouiller</button>`:"")),...gc(s).map(r=>nm(r.member_id)+' <span class="cl">Accompagnateur</span>')].join(", ")+"</p>"}).join("");
 }
 const recapHtml=(x,c)=>"<h3>Récap et e-mails</h3>"+(c.registration=="closed"
   ?`<p>Envoie le récap, la liste à l'entraîneur et une confirmation à chaque compétiteur qui vient.</p><button class="chip" data-act="recap" data-id="${x.id}">Envoyer le récap et prévenir les participants</button>`
@@ -612,14 +651,15 @@ $("fiche-c").addEventListener("click",async e=>{
   const id=+b.dataset.id,a=b.dataset.act,T=(t,w)=>sb.from(t).update(w);
   try{
     let r;
-    if(a=="ans"){const s=b.dataset.s;let boats=[];
-      if(s=="yes"){const o=boatOpts(E.find(z=>z.id===id));
+    if(a=="who"){st.who=b.dataset.w;openFiche(id);return}
+    if(a=="ans"){const s=b.dataset.s,ap=actorProf(),pour=ap.id==me.id?"":" pour "+ap.first_name;let boats=[];
+      if(s=="yes"){const o=boatOpts(E.find(z=>z.id===id),ap);
         boats=o.length==1?o:o.filter(t=>$("bt-"+t)&&$("bt-"+t).checked);
-        if(o.length&&!boats.length){alert("Choisis ton embarcation ("+o.join(" ou ")+") avant de répondre « Je viens ».");return}}
-      if(s!="maybe"&&!confirm("Confirmer « "+ST[s]+(boats.length?" en "+boats.join(" + "):"")+" » ? Cette réponse sera définitive : pour la changer, tu devras demander une modification à l'administrateur."))return;
-      r=await sb.from("responses").upsert({competition_id:id,member_id:me.id,status:s,boats},{onConflict:"competition_id,member_id"})}
-    else if(a=="req")r=await sb.from("registration_requests").insert({competition_id:id,member_id:me.id});
-    else if(a=="chg"){const m=prompt("Pourquoi souhaites-tu modifier ta réponse ? (facultatif)");if(m===null)return;r=await sb.from("change_requests").insert({competition_id:id,member_id:me.id,message:m||null})}
+        if(o.length&&!boats.length){alert("Choisis l'embarcation ("+o.join(" ou ")+") avant de répondre « Je viens ».");return}}
+      if(s!="maybe"&&!confirm("Confirmer « "+ST[s]+(boats.length?" en "+boats.join(" + "):"")+" »"+pour+" ? Cette réponse sera définitive : pour la changer, il faudra demander une modification à l'administrateur."))return;
+      r=await sb.from("responses").upsert({competition_id:id,member_id:ap.id,status:s,boats},{onConflict:"competition_id,member_id"})}
+    else if(a=="req")r=await sb.from("registration_requests").insert({competition_id:id,member_id:actorProf().id});
+    else if(a=="chg"){const m=prompt("Pourquoi souhaites-tu modifier cette réponse ? (facultatif)");if(m===null)return;r=await sb.from("change_requests").insert({competition_id:id,member_id:actorProf().id,message:m||null})}
     else if(a=="cp"&&me.role=="coach")r=await sb.from("companions").upsert({competition_id:id,member_id:me.id,status:b.dataset.s},{onConflict:"competition_id,member_id"});
     else if(a=="jg-del"&&(me.role=="coach"||me.role=="admin"))r=await sb.from("judges").delete().eq("id",+b.dataset.j);
     else if(me.role=="admin"){
@@ -721,12 +761,13 @@ const mail=(f,l)=>slug(f)+"."+slug(l)+"@"+ID_DOM;
 const CATS=["C1","K1"],LV=["N1","N2","N3","R","C","O"];
 function drawAcct(){
   if(!sb){$("acct").innerHTML="";$("menu-l").innerHTML="";return}
-  const un=NT.filter(n=>!n.read).length,adm=me&&me.role=="admin",R={admin:"Administrateur",coach:"Entraîneur",member:"Adhérent"};
-  $("acct").innerHTML=me?`<button class="me" id="acct-b" aria-haspopup="dialog">${esc(me.first_name)}${adm&&un?` <span class="bdg">${un}</span>`:""}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`:'<button class="chip" id="in">Se connecter</button>';
+  const an=NT.filter(n=>!n.read).length,uu=UN.filter(n=>!n.read).length,adm=me&&me.role=="admin",R={admin:"Administrateur",coach:"Entraîneur",member:"Adhérent"},bd=n=>n?` <span class="bdg">${n}</span>`:"";
+  $("acct").innerHTML=me?`<button class="me" id="acct-b" aria-haspopup="dialog">${esc(me.first_name)}${bd((adm?an:0)+uu)}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`:'<button class="chip" id="in">Se connecter</button>';
   $("menu-l").innerHTML=(me?`<div class="mh0"><b>${esc(me.first_name)} ${esc(me.last_name)}</b><small>${R[me.role]||""}</small></div>`:'<div class="mh0"><b>Invité</b><small>Calendrier public uniquement</small></div>')
-    +(adm?`<button id="adm">Membres</button><button id="nc">Nouvelle compétition</button><button id="nt">Notifications${un?` <span class="bdg">${un}</span>`:""}</button>`:"")
+    +(adm?`<button id="adm">Membres</button><button id="nc">Nouvelle compétition</button><button id="nt">Activité des membres${bd(an)}</button>`:"")
+    +(me&&me.role!="coach"?'<button id="pf">Mes profils</button>':"")
     +'<button id="mn-help">Comment ça marche</button>'
-    +(me?'<button id="out" class="dg">Déconnexion</button>':'<button id="in2">Se connecter</button>');
+    +(me?`<button id="un">Notifications${bd(uu)}</button><button id="out" class="dg">Déconnexion</button>`:'<button id="in2">Se connecter</button>');
 }
 async function loadMe(s){
   me=null;
@@ -745,31 +786,36 @@ async function api(action,p,url="/api/admin-users"){
   return j;
 }
 const ck=(f,v,p)=>`<label><input type="checkbox" data-f="${f}" value="${v}"${(p[f]||[]).includes(v)?" checked":""}>${v}</label>`;
-const roleSel=p=>p.role=="admin"||(me&&p.id==me.id)?"":` <select data-role aria-label="Rôle de ${esc(p.first_name)}"><option value="member"${p.role=="member"?" selected":""}>Adhérent</option><option value="coach"${p.role=="coach"?" selected":""}>Entraîneur</option></select>`;
+const roleSel=p=>p.role=="admin"||p.guardian_id||(me&&p.id==me.id)?"":` <select data-role aria-label="Rôle de ${esc(p.first_name)}"><option value="member"${p.role=="member"?" selected":""}>Adhérent</option><option value="coach"${p.role=="coach"?" selected":""}>Entraîneur</option></select>`;
 async function admList(){
   const{data,error}=await sb.from("profiles").select("*").order("last_name");
   if(error){$("adm-l").textContent="Erreur : "+error.message;return}
   const{data:ct}=await sb.from("member_contacts").select("*");const EM={};(ct||[]).forEach(r=>EM[r.member_id]=r.email);
-  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}</div>
-<input class="em" type="email" data-email placeholder="E-mail pour les envois" aria-label="E-mail de ${esc(p.first_name)}" value="${esc(EM[p.id]||"")}">
+  const byId=Object.fromEntries(data.map(z=>[z.id,z]));
+  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.guardian_id&&byId[p.guardian_id]?' <span class="nx">profil de '+esc(byId[p.guardian_id].first_name)+'</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}</div>
+${p.guardian_id?"":`<input class="em" type="email" data-email placeholder="E-mail pour les envois" aria-label="E-mail de ${esc(p.first_name)}" value="${esc(EM[p.id]||"")}">`}
 ${p.role=="coach"?"":CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
 <div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
 }
 if(sb){
   sb.auth.onAuthStateChange((ev,s)=>{setTimeout(()=>loadMe(s),0)});
   const doAct=id=>{
-    if(id=="in"||id=="in2")$("login").showModal();
+    if(id=="in"||id=="in2")showLogin();
     else if(id=="out")sb.auth.signOut();
     else if(id=="adm"){$("adm-d").showModal();admList()}
     else if(id=="nc"){$("fiche-c").innerHTML=compForm(null)+'<button class="x" type="button" data-close>Fermer</button>';$("fiche").showModal()}
     else if(id=="nt"){ntList();$("notif").showModal()}
-    else if(id=="mn-help")$("help-btn").click()};
+    else if(id=="mn-help")$("help-btn").click()
+    else if(id=="pf"){profList();$("profs").showModal()}
+    else if(id=="un"){$("unotif").showModal();unList();loadData().then(unList)}};
   $("acct").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.id=="acct-b")$("menu").showModal();else doAct(b.id)};
   $("menu-l").onclick=e=>{const b=e.target.closest("button");if(!b)return;$("menu").close();doAct(b.id)};
   $("lf").onsubmit=async e=>{e.preventDefault();$("lf-e").textContent="";
-    const{error}=await sb.auth.signInWithPassword({email:mail($("lf-f").value.trim(),$("lf-l").value.trim()),password:$("lf-c").value});
-    if(error){$("lf-e").textContent="Prénom, nom ou code incorrect.";return}
-    $("lf-c").value="";$("login").close()};
+    const f=picked?picked.first_name:$("lf-f").value.trim(),l=picked?picked.last_name:$("lf-l").value.trim();
+    if(!f||!l){$("lf-e").textContent="Choisis ton nom dans la liste.";return}
+    const{error}=await sb.auth.signInWithPassword({email:mail(f,l),password:$("lf-c").value});
+    if(error){$("lf-e").textContent="Code incorrect. Vérifie ton nom et ton code.";return}
+    $("lf-c").value="";picked=null;$("lf-s").value="";$("login").close()};
   $("adm-l").onchange=async e=>{
     const em=e.target.closest("input[data-email]");
     if(em){const id=em.closest(".mb").dataset.id,v=em.value.trim();
@@ -798,6 +844,50 @@ if(sb){
 }else drawAcct();
 $("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help-coach").hidden=!(me&&(me.role=="coach"||me.role=="admin"));$("help").showModal()};
 document.querySelectorAll("dialog").forEach(d=>d.onclick=e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()});
+let NAMES=null,picked=null;
+async function showLogin(){
+  $("login").showModal();$("lf-e").textContent="";
+  if(NAMES===null){
+    const{data,error}=await sb.rpc("login_names");
+    NAMES=(error||!data)?[]:data;
+    if(!NAMES.length){$("lf-sel").hidden=true;$("lf-man").hidden=false}   // secours : saisie manuelle si la liste est indisponible
+  }
+  drawNames();
+}
+function drawNames(){
+  if(picked){$("lf-sel").hidden=true;$("lf-pick").hidden=false;$("lf-pn").textContent=picked.first_name+" "+picked.last_name;return}
+  $("lf-pick").hidden=true;
+  if(!$("lf-man").hidden)return;
+  $("lf-sel").hidden=false;
+  const q=norm($("lf-s").value.trim()),list=NAMES.filter(n=>!q||norm(n.first_name+" "+n.last_name).includes(q));
+  $("lf-list").innerHTML=list.map(n=>`<button type="button" role="option" data-n="${NAMES.indexOf(n)}">${esc(n.first_name)} <b>${esc(n.last_name.toUpperCase())}</b></button>`).join("")||'<p class="mu">Aucun nom ne correspond.</p>';
+}
+$("lf-s").oninput=drawNames;
+$("lf-list").onclick=e=>{const b=e.target.closest("[data-n]");if(!b)return;picked=NAMES[+b.dataset.n];drawNames();$("lf-c").focus()};
+$("lf-chg").onclick=()=>{picked=null;$("lf-s").value="";drawNames();$("lf-s").focus()};
+function unList(){
+  $("un-l").innerHTML=UN.map(n=>{const ok=n.competition_id&&E.some(z=>z.id===n.competition_id);
+    return`<div class="nt${n.read?"":" un"}" data-n="${n.id}"><button type="button" class="nt-b" data-open="${ok?n.competition_id:""}">${esc(n.message)}<small>${new Date(n.created_at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</small></button>${n.read?"":`<button type="button" class="link" data-mr="${n.id}">Marquer comme lue</button>`}</div>`}).join("")||"<p>Aucune notification pour l'instant.</p>";
+}
+function profList(){
+  if(!me)return;
+  $("pf-l").innerHTML=actors().map(p=>{const bl=Object.keys(p.boat_levels||{}),self=p.id==me.id;
+    return`<div class="mb"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${self?' <span class="nx">toi</span>':""}</div><div class="mu">${bl.length?"Embarcations : "+bl.join(", "):(self?"Embarcations réglées par l'administrateur":"En attente : l'administrateur doit régler ses embarcations et ses niveaux")}</div>${self?"":`<button class="link" data-del="${p.id}">Retirer ce profil</button>`}</div>`}).join("");
+}
+if(sb){
+  $("un-l").addEventListener("click",async e=>{
+    const mr=e.target.closest("[data-mr]"),op=e.target.closest("[data-open]");
+    if(mr){await sb.from("user_notifications").update({read:true}).eq("id",+mr.dataset.mr);await loadData();unList();return}
+    if(op){const row=op.closest("[data-n]"),c=op.dataset.open;
+      await sb.from("user_notifications").update({read:true}).eq("id",+row.dataset.n);await loadData();
+      if(c){$("unotif").close();openFiche(+c)}else unList()}});
+  $("un-all").onclick=async()=>{await sb.from("user_notifications").update({read:true}).eq("read",false);await loadData();unList()};
+  $("pf-f").onsubmit=async e=>{e.preventDefault();$("pf-e").textContent="";
+    try{await api("add_dependent",{first_name:$("pf-fn").value.trim(),last_name:$("pf-ln").value.trim()});e.target.reset();await loadData();profList()}catch(err){$("pf-e").textContent=err.message}};
+  $("pf-l").onclick=async e=>{const b=e.target.closest("[data-del]");if(!b)return;
+    const p=PF[b.dataset.del];if(!confirm("Retirer le profil de "+(p?p.first_name:"cette personne")+" ? Ses réponses seront supprimées."))return;
+    try{await api("remove_dependent",{id:b.dataset.del});await loadData();profList()}catch(err){$("pf-e").textContent=err.message}};
+}
 const setSec=v=>{st.sec=v;st.sel="";render();window.scrollTo({top:0})};
 $("secs").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec)};
 $("bn").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec);else if(e.target.closest("#more-b"))$("menu").showModal()};
