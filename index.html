@@ -96,7 +96,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .day.yes{box-shadow:inset 0 0 0 3px var(--accent)}.dc.yes{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
 .em{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:500 14px "DM Sans",sans-serif;margin:6px 0;background:#fff;color:var(--ink)}
 #jf{margin:10px 0}#jf input{width:auto;flex:1 1 150px;margin:0}
-.nl{max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:14px;margin:6px 0 12px;background:#fff}
+.nl{max-height:228px;overflow-y:auto;border:1px solid var(--line);border-radius:14px;margin:6px 0 12px;background:#fff}
 .nl button{display:flex;gap:6px;width:100%;min-height:48px;align-items:center;border:0;border-bottom:1px solid #EEF2FB;background:none;font:500 16px "DM Sans",sans-serif;color:var(--ink);padding:0 14px;text-align:left;cursor:pointer}
 .nl button:last-child{border-bottom:0}.nl button:hover,.nl button:focus-visible{background:var(--bg)}
 .pk{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:14px;padding:10px 14px;margin:6px 0 12px;font:600 16px "DM Sans",sans-serif}
@@ -104,6 +104,7 @@ dialog::backdrop{background:rgba(7,18,63,.55)}
 .nt-b{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;cursor:pointer;padding:0;color:inherit}
 .nt small{display:block;color:var(--mute);font-weight:400;font-size:12px;margin-top:2px}
 .who{margin:6px 0 10px}
+.mb select[data-parent]{margin-top:6px;max-width:100%}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 [hidden]{display:none!important}
@@ -258,7 +259,7 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <h3>Pour l'administrateur</h3>
 <p>Les outils d'administration sont dans le menu de ton compte (ton prénom, en haut à droite, ou « Plus » sur téléphone).</p>
 <ul>
-<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum, rôle Adhérent ou Entraîneur), coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
+<li><b>Membres</b> : ajoute un compte (prénom, nom, code de 6 caractères minimum, rôle Adhérent ou Entraîneur) ou un profil Enfant, que tu rattaches à son parent : l'enfant ne se connecte pas, son parent répond pour lui, coche ses embarcations (K1, C1) avec les niveaux autorisés dans chacune (ex. K1 : N2 et R, C1 : N3 et R), change son code, désactive ou supprime son compte.</li>
 <li><b>Nouvelle compétition</b> : crée une compétition. Pour modifier ou supprimer une compétition, ouvre sa fiche et descends en bas.</li>
 <li><b>Fiche</b> : coche « CK Lagny envisage d'y participer », ouvre ou ferme les inscriptions, ajoute infos, liens et liste de départ.</li>
 <li><b>Récap</b> : quand les inscriptions d'une compétition sont « Fermées », le bouton « Envoyer le récap et prévenir les participants » envoie le récap, la liste à inscrire à l'entraîneur et une confirmation à chaque compétiteur. Renseigne d'abord les adresses e-mail dans « Membres ».</li>
@@ -286,10 +287,10 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
 </div></dialog>
 <dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
-<h2 id="lg-t">Connexion membre</h2>
+<h2 id="lg-t" tabindex="-1" autofocus>Connexion membre</h2>
 <p>Choisis ton nom dans la liste, puis saisis ton code personnel. Sans compte, tu consultes le calendrier public en invité.</p>
 <div id="lf-pick" hidden><div class="pk"><b id="lf-pn"></b><button type="button" class="link" id="lf-chg">Changer</button></div></div>
-<div id="lf-sel"><label class="f" for="lf-s">Ton nom</label><input id="lf-s" type="search" placeholder="Rechercher ton nom…" autocomplete="off"><div id="lf-list" class="nl" role="listbox" aria-label="Adhérents"></div></div>
+<div id="lf-sel"><label class="f" for="lf-s">Ton nom</label><input id="lf-s" type="search" placeholder="Choisis ton nom…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="lf-list"><div id="lf-list" class="nl" role="listbox" aria-label="Adhérents" hidden></div></div>
 <div id="lf-man" hidden><label class="f" for="lf-f">Prénom</label><input id="lf-f" type="text" autocomplete="given-name"><label class="f" for="lf-l">Nom</label><input id="lf-l" type="text" autocomplete="family-name"></div>
 <label class="f" for="lf-c">Code personnel</label><input id="lf-c" type="password" autocomplete="current-password" required>
 <div class="er" id="lf-e" role="alert"></div>
@@ -305,9 +306,10 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <form id="adm-f">
 <label class="f" for="af">Prénom</label><input id="af" type="text" required>
 <label class="f" for="al">Nom</label><input id="al" type="text" required>
-<label class="f" for="ac">Code personnel (6 caractères minimum)</label><input id="ac" type="text" minlength="6" required>
-<label class="f" for="ae">E-mail pour les envois (facultatif)</label><input id="ae" type="email">
-<label class="f" for="ar">Rôle</label><select id="ar"><option value="member">Adhérent</option><option value="coach">Entraîneur</option></select>
+<div id="ac-w"><label class="f" for="ac">Code personnel (6 caractères minimum)</label><input id="ac" type="text" minlength="6" required>
+<label class="f" for="ae">E-mail pour les envois (facultatif)</label><input id="ae" type="email"></div>
+<label class="f" for="ar">Rôle</label><select id="ar"><option value="member">Adhérent</option><option value="coach">Entraîneur</option><option value="child">Enfant</option></select>
+<div id="ap-w" hidden><label class="f" for="ap">Parent de cet enfant</label><select id="ap"></select><p class="mu">Un profil enfant ne se connecte pas : son parent répond pour lui.</p></div>
 <button class="x" type="submit">Créer le compte</button>
 </form>
 <button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
@@ -786,16 +788,18 @@ async function api(action,p,url="/api/admin-users"){
   return j;
 }
 const ck=(f,v,p)=>`<label><input type="checkbox" data-f="${f}" value="${v}"${(p[f]||[]).includes(v)?" checked":""}>${v}</label>`;
-const roleSel=p=>p.role=="admin"||p.guardian_id||(me&&p.id==me.id)?"":` <select data-role aria-label="Rôle de ${esc(p.first_name)}"><option value="member"${p.role=="member"?" selected":""}>Adhérent</option><option value="coach"${p.role=="coach"?" selected":""}>Entraîneur</option></select>`;
+const roleSel=p=>p.role=="admin"||(me&&p.id==me.id)?"":` <select data-role aria-label="Rôle de ${esc(p.first_name)}"><option value="member"${!p.guardian_id&&p.role=="member"?" selected":""}>Adhérent</option><option value="coach"${p.role=="coach"?" selected":""}>Entraîneur</option><option value="child"${p.guardian_id?" selected":""}>Enfant</option></select>`;
+const parentSel=(p,data)=>p.role=="admin"||p.role=="coach"||(me&&p.id==me.id)?"":` <select data-parent aria-label="Parent de ${esc(p.first_name)}"${p.guardian_id?"":" hidden"}><option value="">Choisir le parent…</option>${data.filter(z=>!z.guardian_id&&["member","admin"].includes(z.role)&&z.id!=p.id).map(z=>`<option value="${z.id}"${z.id==p.guardian_id?" selected":""}>${esc(z.first_name+" "+z.last_name)}</option>`).join("")}</select>`;
 async function admList(){
   const{data,error}=await sb.from("profiles").select("*").order("last_name");
   if(error){$("adm-l").textContent="Erreur : "+error.message;return}
   const{data:ct}=await sb.from("member_contacts").select("*");const EM={};(ct||[]).forEach(r=>EM[r.member_id]=r.email);
   const byId=Object.fromEntries(data.map(z=>[z.id,z]));
-  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.guardian_id&&byId[p.guardian_id]?' <span class="nx">profil de '+esc(byId[p.guardian_id].first_name)+'</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}</div>
+  $("adm-l").innerHTML=data.map(p=>`<div class="mb" data-id="${p.id}"${p.guardian_id?' data-child="1"':""}><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${p.role=="admin"?' <span class="nx">admin</span>':p.role=="coach"?' <span class="nx">entraîneur</span>':""}${p.guardian_id&&byId[p.guardian_id]?' <span class="nx">enfant de '+esc(byId[p.guardian_id].first_name)+'</span>':""}${p.active?"":' <span class="nx" style="color:#C8161D">désactivé</span>'}${roleSel(p)}${parentSel(p,data)}</div>
 ${p.guardian_id?"":`<input class="em" type="email" data-email placeholder="E-mail pour les envois" aria-label="E-mail de ${esc(p.first_name)}" value="${esc(EM[p.id]||"")}">`}
 ${p.role=="coach"?"":CATS.map(b=>`<div class="mc" data-b="${b}"><label><input type="checkbox" data-bo${b in (p.boat_levels||{})?" checked":""}> <b>${b}</b></label><span class="sep"></span>${LV.map(l=>`<label><input type="checkbox" data-lv value="${l}"${((p.boat_levels||{})[b]||[]).includes(l)?" checked":""}>${l}</label>`).join("")}</div>`).join("")}
 <div class="ma"><button class="link" data-a="code">Nouveau code</button><button class="link" data-a="act">${p.active?"Désactiver":"Réactiver"}</button>${me&&p.id==me.id?"":'<button class="link" data-a="del">Supprimer</button>'}</div></div>`).join("")||"Aucun membre.";
+  $("ap").innerHTML='<option value="">Choisir le parent…</option>'+data.filter(z=>!z.guardian_id&&["member","admin"].includes(z.role)).map(z=>`<option value="${z.id}">${esc(z.first_name+" "+z.last_name)}</option>`).join("");
 }
 if(sb){
   sb.auth.onAuthStateChange((ev,s)=>{setTimeout(()=>loadMe(s),0)});
@@ -821,8 +825,17 @@ if(sb){
     if(em){const id=em.closest(".mb").dataset.id,v=em.value.trim();
       const r=v?await sb.from("member_contacts").upsert({member_id:id,email:v},{onConflict:"member_id"}):await sb.from("member_contacts").delete().eq("member_id",id);
       $("adm-e").textContent=r.error?"Erreur : "+r.error.message:"";return}
-    const rs=e.target.closest("select[data-role]");
-    if(rs){try{await api("set_role",{id:rs.closest(".mb").dataset.id,role:rs.value});$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}return}
+    const rs=e.target.closest("select[data-role]"),ps=e.target.closest("select[data-parent]");
+    if(rs||ps){
+      const row=(rs||ps).closest(".mb"),id=row.dataset.id,isChild=row.dataset.child=="1";
+      try{
+        if(rs&&rs.value=="child"){row.querySelector("select[data-parent]").hidden=false;$("adm-e").textContent="Choisis maintenant le parent de ce profil.";return}
+        if(ps){if(!ps.value)return;await api("set_guardian",{id,guardian_id:ps.value})}
+        else if(rs.value=="member"&&isChild){const c=prompt("Ce profil redevient un adhérent qui se connecte : choisis son code personnel (6 caractères minimum).");if(!c){await admList();return}await api("set_guardian",{id,guardian_id:null,code:c})}
+        else await api("set_role",{id,role:rs.value});
+        $("adm-e").textContent="";await admList();
+      }catch(err){$("adm-e").textContent=err.message;await admList()}
+      return}
     const c=e.target.closest("input[data-bo],input[data-lv]");if(!c)return;
     if(c.hasAttribute("data-lv")&&c.checked)c.closest(".mc").querySelector("[data-bo]").checked=true;
     const row=c.closest(".mb"),bl={};
@@ -837,16 +850,20 @@ if(sb){
       else if(a=="del"){if(!confirm("Supprimer définitivement le compte de "+nm+" et ses réponses ?"))return;await api("delete",{id})}
       $("adm-e").textContent="";await admList();
     }catch(err){$("adm-e").textContent=err.message}};
+  const toggleChild=()=>{const c=$("ar").value=="child";$("ap-w").hidden=!c;$("ac-w").hidden=c;$("ac").required=!c};
+  $("ar").onchange=toggleChild;
   $("adm-f").onsubmit=async e=>{e.preventDefault();
-    try{const j=await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),code:$("ac").value,role:$("ar").value});
-      const ad=$("ae").value.trim();if(ad)await sb.from("member_contacts").upsert({member_id:j.id,email:ad},{onConflict:"member_id"});
-      e.target.reset();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
+    try{const child=$("ar").value=="child";
+      if(child&&!$("ap").value)throw new Error("Choisis le parent de cet enfant.");
+      const j=await api("create",{first_name:$("af").value.trim(),last_name:$("al").value.trim(),role:$("ar").value,...(child?{guardian_id:$("ap").value}:{code:$("ac").value})});
+      const ad=$("ae").value.trim();if(ad&&!child)await sb.from("member_contacts").upsert({member_id:j.id,email:ad},{onConflict:"member_id"});
+      e.target.reset();toggleChild();$("adm-e").textContent="";await admList()}catch(err){$("adm-e").textContent=err.message}};
 }else drawAcct();
 $("help-btn").onclick=()=>{$("help-adm").hidden=!(me&&me.role=="admin");$("help-coach").hidden=!(me&&(me.role=="coach"||me.role=="admin"));$("help").showModal()};
 document.querySelectorAll("dialog").forEach(d=>d.onclick=e=>{if(e.target===d||e.target.closest("[data-close]"))d.close()});
-let NAMES=null,picked=null;
+let NAMES=null,picked=null,nlOpen=false;
 async function showLogin(){
-  $("login").showModal();$("lf-e").textContent="";
+  $("login").showModal();$("lf-e").textContent="";nlOpen=false;
   if(NAMES===null){
     const{data,error}=await sb.rpc("login_names");
     NAMES=(error||!data)?[]:data;
@@ -861,10 +878,17 @@ function drawNames(){
   $("lf-sel").hidden=false;
   const q=norm($("lf-s").value.trim()),list=NAMES.filter(n=>!q||norm(n.first_name+" "+n.last_name).includes(q));
   $("lf-list").innerHTML=list.map(n=>`<button type="button" role="option" data-n="${NAMES.indexOf(n)}">${esc(n.first_name)} <b>${esc(n.last_name.toUpperCase())}</b></button>`).join("")||'<p class="mu">Aucun nom ne correspond.</p>';
+  $("lf-list").hidden=!nlOpen;$("lf-s").setAttribute("aria-expanded",String(nlOpen));
 }
-$("lf-s").oninput=drawNames;
-$("lf-list").onclick=e=>{const b=e.target.closest("[data-n]");if(!b)return;picked=NAMES[+b.dataset.n];drawNames();$("lf-c").focus()};
-$("lf-chg").onclick=()=>{picked=null;$("lf-s").value="";drawNames();$("lf-s").focus()};
+const openNames=()=>{nlOpen=true;drawNames()};
+$("lf-s").onfocus=openNames;$("lf-s").onclick=openNames;$("lf-s").oninput=openNames;
+$("lf-s").onkeydown=e=>{
+  if(e.key=="Escape"&&nlOpen){e.preventDefault();nlOpen=false;drawNames()}
+  else if(e.key=="ArrowDown"){const b=$("lf-list").querySelector("button");if(b){e.preventDefault();b.focus()}}
+  else if(e.key=="Enter"){e.preventDefault();const b=$("lf-list").querySelectorAll("button");if(b.length==1)b[0].click()}};
+$("lf-list").onclick=e=>{const b=e.target.closest("[data-n]");if(!b)return;picked=NAMES[+b.dataset.n];nlOpen=false;drawNames();$("lf-c").focus()};
+$("lf-chg").onclick=()=>{picked=null;$("lf-s").value="";nlOpen=true;drawNames();$("lf-s").focus()};
+$("login").addEventListener("click",e=>{if(nlOpen&&!e.target.closest("#lf-sel,#lf-pick")){nlOpen=false;drawNames()}});
 function unList(){
   $("un-l").innerHTML=UN.map(n=>{const ok=n.competition_id&&E.some(z=>z.id===n.competition_id);
     return`<div class="nt${n.read?"":" un"}" data-n="${n.id}"><button type="button" class="nt-b" data-open="${ok?n.competition_id:""}">${esc(n.message)}<small>${new Date(n.created_at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</small></button>${n.read?"":`<button type="button" class="link" data-mr="${n.id}">Marquer comme lue</button>`}</div>`}).join("")||"<p>Aucune notification pour l'instant.</p>";
