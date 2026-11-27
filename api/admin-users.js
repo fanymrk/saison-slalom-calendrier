@@ -30,15 +30,16 @@ module.exports = async (req, res) => {
     const ok = (extra) => res.status(200).json({ ok: true, ...(extra || {}) });
     const need = (c) => { if (!c || String(c).length < 6) throw new Error("Le code doit faire au moins 6 caractères."); };
 
-    // Profils rattachés : ouvert à tout adhérent (pour ses propres profils)
-    if (b.action === "add_dependent") {
-      if (p.guardian_id) throw new Error("Un profil rattaché ne peut pas en rattacher d'autres.");
-      if (!["member", "admin"].includes(p.role)) throw new Error("Réservé aux adhérents.");
-      const first = String(b.first_name || "").trim(), last = String(b.last_name || "").trim();
-      if (!first || !last) throw new Error("Prénom et nom obligatoires.");
-      const { data: kids } = await admin.from("profiles").select("id").eq("guardian_id", u.user.id);
-      if ((kids || []).length >= 6) throw new Error("Nombre maximum de profils rattachés atteint (6).");
-      // compte technique : il ne se connecte jamais (mot de passe aléatoire, connexion bloquée)
+    // Vérifie qu'un parent est valide : un adhérent actif, qui n'est pas lui-même un enfant
+    const checkParent = async (gid, selfId) => {
+      if (!gid) throw new Error("Choisis le parent de ce profil.");
+      if (gid === selfId) throw new Error("Un profil ne peut pas être son propre parent.");
+      const { data: g } = await admin.from("profiles").select("role, active, guardian_id").eq("id", gid).single();
+      if (!g || !g.active || g.guardian_id || !["member", "admin"].includes(g.role)) throw new Error("Le parent doit être un adhérent (pas un autre enfant ni un entraîneur).");
+      return gid;
+    };
+    // Crée un profil enfant : un compte technique qui ne se connecte jamais (mot de passe aléatoire, connexion bloquée)
+    const makeChild = async (first, last, gid) => {
       const { data, error } = await admin.auth.admin.createUser({
         email: `dep-${crypto.randomUUID()}@${ID_DOM}`,
         password: crypto.randomBytes(24).toString("hex"),
@@ -47,9 +48,20 @@ module.exports = async (req, res) => {
         user_metadata: { first_name: first, last_name: last },
       });
       if (error) throw error;
-      const { error: e2 } = await admin.from("profiles").update({ guardian_id: u.user.id }).eq("id", data.user.id);
+      const { error: e2 } = await admin.from("profiles").update({ guardian_id: gid }).eq("id", data.user.id);
       if (e2) { await admin.auth.admin.deleteUser(data.user.id); throw e2; }
-      return ok({ id: data.user.id });
+      return data.user.id;
+    };
+
+    // Profils rattachés : ouvert à tout adhérent (pour ses propres profils)
+    if (b.action === "add_dependent") {
+      if (p.guardian_id) throw new Error("Un profil rattaché ne peut pas en rattacher d'autres.");
+      if (!["member", "admin"].includes(p.role)) throw new Error("Réservé aux adhérents.");
+      const first = String(b.first_name || "").trim(), last = String(b.last_name || "").trim();
+      if (!first || !last) throw new Error("Prénom et nom obligatoires.");
+      const { data: kids } = await admin.from("profiles").select("id").eq("guardian_id", u.user.id);
+      if ((kids || []).length >= 6) throw new Error("Nombre maximum de profils rattachés atteint (6).");
+      return ok({ id: await makeChild(first, last, u.user.id) });
     }
     if (b.action === "remove_dependent") {
       const { data: t } = await admin.from("profiles").select("guardian_id").eq("id", b.id).single();
@@ -66,6 +78,10 @@ module.exports = async (req, res) => {
     if (b.action === "create") {
       const first = String(b.first_name || "").trim(), last = String(b.last_name || "").trim();
       if (!first || !last) throw new Error("Prénom et nom obligatoires.");
+      if (b.role === "child") {                       // profil enfant créé par l'administrateur, rattaché à un parent
+        const gid = await checkParent(b.guardian_id);
+        return ok({ id: await makeChild(first, last, gid) });
+      }
       need(b.code);
       const { data, error } = await admin.auth.admin.createUser({
         email: `${slug(first)}.${slug(last)}@${ID_DOM}`,
@@ -83,11 +99,33 @@ module.exports = async (req, res) => {
 
     if (!b.id) throw new Error("Membre manquant.");
 
+    if (b.action === "set_guardian") {                // rattacher un adhérent à un parent (il devient un enfant), ou le détacher
+      const { data: t } = await admin.from("profiles").select("role, guardian_id").eq("id", b.id).single();
+      if (!t) throw new Error("Membre introuvable.");
+      if (t.role !== "member") throw new Error("Seul un adhérent peut devenir un profil enfant.");
+      if (b.guardian_id) {
+        await checkParent(b.guardian_id, b.id);
+        const { data: kids } = await admin.from("profiles").select("id").eq("guardian_id", b.id);
+        if ((kids || []).length) throw new Error("Ce profil a déjà des enfants rattachés : il ne peut pas être un enfant lui-même.");
+        const { error: e1 } = await admin.from("profiles").update({ guardian_id: b.guardian_id }).eq("id", b.id);
+        if (e1) throw e1;
+        const { error: e2 } = await admin.auth.admin.updateUserById(b.id, { ban_duration: "876000h" });
+        if (e2) throw e2;
+      } else {
+        need(b.code);                                 // il redevient un adhérent qui se connecte : il lui faut un code
+        const { error: e2 } = await admin.auth.admin.updateUserById(b.id, { password: String(b.code), ban_duration: "none" });
+        if (e2) throw e2;
+        const { error: e1 } = await admin.from("profiles").update({ guardian_id: null }).eq("id", b.id);
+        if (e1) throw e1;
+      }
+      return ok();
+    }
     if (b.action === "set_role") {
       if (b.id === u.user.id) throw new Error("Tu ne peux pas changer ton propre rôle.");
       if (!["member", "coach"].includes(b.role)) throw new Error("Rôle inconnu.");
-      const { data: t } = await admin.from("profiles").select("role").eq("id", b.id).single();
+      const { data: t } = await admin.from("profiles").select("role, guardian_id").eq("id", b.id).single();
       if (!t) throw new Error("Membre introuvable.");
+      if (t.guardian_id) throw new Error("Ce profil est un enfant : passe-le d'abord en adhérent.");
       if (t.role === "admin") throw new Error("Le rôle d'un administrateur ne se change pas ici.");
       const { error } = await admin.from("profiles").update({ role: b.role }).eq("id", b.id);
       if (error) throw error;
