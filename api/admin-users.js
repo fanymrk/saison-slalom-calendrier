@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     if (ue || !u || !u.user) return res.status(401).json({ error: "Non connecté" });
 
     // 2. Est-ce un administrateur actif ? (vérifié dans la base, pas dans le navigateur)
-    const { data: p } = await admin.from("profiles").select("role, active, guardian_id").eq("id", u.user.id).single();
+    const { data: p } = await admin.from("profiles").select("role, active").eq("id", u.user.id).single();
     if (!p || !p.active) return res.status(403).json({ error: "Compte inactif ou introuvable" });
 
     const b = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
@@ -53,27 +53,16 @@ module.exports = async (req, res) => {
       return data.user.id;
     };
 
-    // Profils rattachés : ouvert à tout adhérent (pour ses propres profils)
-    if (b.action === "add_dependent") {
-      if (p.guardian_id) throw new Error("Un profil rattaché ne peut pas en rattacher d'autres.");
-      if (!["member", "admin"].includes(p.role)) throw new Error("Réservé aux adhérents.");
-      const first = String(b.first_name || "").trim(), last = String(b.last_name || "").trim();
-      if (!first || !last) throw new Error("Prénom et nom obligatoires.");
-      const { data: kids } = await admin.from("profiles").select("id").eq("guardian_id", u.user.id);
-      if ((kids || []).length >= 6) throw new Error("Nombre maximum de profils rattachés atteint (6).");
-      return ok({ id: await makeChild(first, last, u.user.id) });
-    }
+    // Tout le reste est réservé à l'administrateur
+    if (p.role !== "admin") return res.status(403).json({ error: "Réservé à l'administrateur" });
+
     if (b.action === "remove_dependent") {
       const { data: t } = await admin.from("profiles").select("guardian_id").eq("id", b.id).single();
-      if (!t || !t.guardian_id) throw new Error("Profil rattaché introuvable.");
-      if (t.guardian_id !== u.user.id && p.role !== "admin") throw new Error("Ce profil n'est pas rattaché à ton compte.");
+      if (!t || !t.guardian_id) throw new Error("Profil enfant introuvable.");
       const { error } = await admin.auth.admin.deleteUser(b.id);
       if (error) throw error;
       return ok();
     }
-
-    // Tout le reste est réservé à l'administrateur
-    if (p.role !== "admin") return res.status(403).json({ error: "Réservé à l'administrateur" });
 
     if (b.action === "create") {
       const first = String(b.first_name || "").trim(), last = String(b.last_name || "").trim();
