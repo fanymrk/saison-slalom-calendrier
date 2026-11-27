@@ -245,7 +245,7 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <li><b>Niveau ou catégorie non adaptés</b> : tu peux consulter la fiche, mais pas répondre, sauf autorisation de l'administrateur.</li>
 <li><b>Ton calendrier</b> : ta prochaine compétition confirmée s'affiche en haut de la liste. Un trait plein marque « Je viens », un trait clair « Je ne sais pas encore », et une carte barrée « Je ne viens pas ». Le filtre « Mes réponses seulement » ne garde que tes compétitions, et l'onglet <b>Mes compétitions</b> regroupe ce qu'il te reste à répondre et tes réponses.</li>
 <li><b>Notifications</b> : dans le menu de ton compte, juste au-dessus de « Déconnexion ». Tu es prévenu d'une nouvelle compétition, de l'ouverture des inscriptions, d'une modification ou d'une nouvelle information. Clique sur une notification pour ouvrir la compétition, ou sur « Marquer comme lue ».</li>
-<li><b>Mes profils</b> : pour répondre à la place d'une autre personne (par exemple ton enfant), ajoute son profil dans le menu de ton compte. Dans la fiche d'une compétition, choisis ensuite « Moi » ou son prénom avant de répondre. Chaque personne a sa propre réponse. L'administrateur règle les embarcations et les niveaux de son profil.</li>
+<li><b>Mes profils</b> : pour répondre à la place d'une autre personne (par exemple ton enfant), demande à l'administrateur de créer son profil et de le rattacher à ton compte. Dans la fiche d'une compétition, choisis ensuite « Moi » ou son prénom avant de répondre. Chaque personne a sa propre réponse. L'administrateur règle ses embarcations et ses niveaux. Le menu « Mes profils » apparaît dès qu'un profil est rattaché.</li>
 </ul>
 <div id="help-coach" hidden>
 <h3>Pour l'entraîneur</h3>
@@ -279,12 +279,9 @@ main h2 span{font:500 14px "DM Sans",sans-serif;color:var(--mute);margin:0}
 <dialog id="unotif" aria-labelledby="un-t"><div class="hp"><h2 id="un-t">Notifications</h2><div id="un-l"></div><button class="link" type="button" id="un-all">Tout marquer comme lu</button><button class="x" type="button" data-close>Fermer</button></div></dialog>
 <dialog id="profs" aria-labelledby="pf-t"><div class="hp">
 <h2 id="pf-t">Mes profils</h2>
-<p>Ajoute une personne que tu gères (par exemple ton enfant) pour répondre aux compétitions à sa place, sans te déconnecter. L'administrateur règle ensuite ses embarcations et ses niveaux.</p>
-<div class="er" id="pf-e" role="alert"></div>
+<p>Voici les personnes dont tu gères les réponses depuis ton compte. Pour en rattacher une (par exemple ton enfant), demande à l'administrateur : lui seul peut créer le profil et le relier à ton compte.</p>
 <div id="pf-l"></div>
-<h3>Ajouter une personne</h3>
-<form id="pf-f"><label class="f" for="pf-fn">Prénom</label><input id="pf-fn" type="text" required><label class="f" for="pf-ln">Nom</label><input id="pf-ln" type="text" required><button class="x" type="submit">Ajouter ce profil</button></form>
-<button class="link" type="button" data-close style="margin-top:8px">Fermer</button>
+<button class="x" type="button" data-close>Fermer</button>
 </div></dialog>
 <dialog id="login" aria-labelledby="lg-t"><form id="lf" class="hp">
 <h2 id="lg-t" tabindex="-1" autofocus>Connexion membre</h2>
@@ -767,7 +764,7 @@ function drawAcct(){
   $("acct").innerHTML=me?`<button class="me" id="acct-b" aria-haspopup="dialog">${esc(me.first_name)}${bd((adm?an:0)+uu)}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`:'<button class="chip" id="in">Se connecter</button>';
   $("menu-l").innerHTML=(me?`<div class="mh0"><b>${esc(me.first_name)} ${esc(me.last_name)}</b><small>${R[me.role]||""}</small></div>`:'<div class="mh0"><b>Invité</b><small>Calendrier public uniquement</small></div>')
     +(adm?`<button id="adm">Membres</button><button id="nc">Nouvelle compétition</button><button id="nt">Activité des membres${bd(an)}</button>`:"")
-    +(me&&me.role!="coach"?'<button id="pf">Mes profils</button>':"")
+    +(me&&me.role!="coach"&&actors().length>1?'<button id="pf">Mes profils</button>':"")
     +'<button id="mn-help">Comment ça marche</button>'
     +(me?`<button id="un">Notifications${bd(uu)}</button><button id="out" class="dg">Déconnexion</button>`:'<button id="in2">Se connecter</button>');
 }
@@ -896,7 +893,7 @@ function unList(){
 function profList(){
   if(!me)return;
   $("pf-l").innerHTML=actors().map(p=>{const bl=Object.keys(p.boat_levels||{}),self=p.id==me.id;
-    return`<div class="mb"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${self?' <span class="nx">toi</span>':""}</div><div class="mu">${bl.length?"Embarcations : "+bl.join(", "):(self?"Embarcations réglées par l'administrateur":"En attente : l'administrateur doit régler ses embarcations et ses niveaux")}</div>${self?"":`<button class="link" data-del="${p.id}">Retirer ce profil</button>`}</div>`}).join("");
+    return`<div class="mb"><div><b>${esc(p.first_name)} ${esc(p.last_name)}</b>${self?' <span class="nx">toi</span>':""}</div><div class="mu">${bl.length?"Embarcations : "+bl.join(", "):(self?"Embarcations réglées par l'administrateur":"En attente : l'administrateur doit régler ses embarcations et ses niveaux")}</div></div>`}).join("");
 }
 if(sb){
   $("un-l").addEventListener("click",async e=>{
@@ -906,11 +903,6 @@ if(sb){
       await sb.from("user_notifications").update({read:true}).eq("id",+row.dataset.n);await loadData();
       if(c){$("unotif").close();openFiche(+c)}else unList()}});
   $("un-all").onclick=async()=>{await sb.from("user_notifications").update({read:true}).eq("read",false);await loadData();unList()};
-  $("pf-f").onsubmit=async e=>{e.preventDefault();$("pf-e").textContent="";
-    try{await api("add_dependent",{first_name:$("pf-fn").value.trim(),last_name:$("pf-ln").value.trim()});e.target.reset();await loadData();profList()}catch(err){$("pf-e").textContent=err.message}};
-  $("pf-l").onclick=async e=>{const b=e.target.closest("[data-del]");if(!b)return;
-    const p=PF[b.dataset.del];if(!confirm("Retirer le profil de "+(p?p.first_name:"cette personne")+" ? Ses réponses seront supprimées."))return;
-    try{await api("remove_dependent",{id:b.dataset.del});await loadData();profList()}catch(err){$("pf-e").textContent=err.message}};
 }
 const setSec=v=>{st.sec=v;st.sel="";render();window.scrollTo({top:0})};
 $("secs").onclick=e=>{const b=e.target.closest("[data-sec]");if(b)setSec(b.dataset.sec)};
